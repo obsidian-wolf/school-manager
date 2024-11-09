@@ -8,6 +8,13 @@ export const AXIOS_INSTANCE = Axios.create({
 	},
 });
 
+AXIOS_INSTANCE.interceptors.request.use((config) => {
+	// Add your request interceptors
+	// add jwt token
+	config.headers.Authorization = `Basic U2Nob29sOiRjaG9vIQ==`;
+	return config;
+});
+
 /**
  * Custom serializer to convert array params to return:
  * key=a&key=b instead of key=[]a&key=[]b

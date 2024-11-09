@@ -5,7 +5,7 @@
 		"npm": "~10"
 	},
 	"scripts": {
-		"local": "next dev",
+		"local": "next dev -p 3001",
 		"build": "next build",
 		"start": "next start",
 		"sync-api": "node scripts/sync-api.mjs && eslint --fix src/api",
@@ -38,6 +38,8 @@
 		"jsonpath-plus": "^10"
 	},
 	"devDependencies": {
+		"@tailwindcss/typography": "^0.5.15",
+		"daisyui": "^4.12.14",
 		"eslint": "latest",
 		"eslint-config-next": "latest",
 		"eslint-config-prettier": "latest",

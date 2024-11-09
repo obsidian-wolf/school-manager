@@ -24,7 +24,7 @@ function asyncExec(command) {
 }
 
 async function getSwaggerDoc() {
-	const API_HOST = 'http://localhost:5001';
+	const API_HOST = 'http://localhost:3000';
 
 	const agent = new Agent({
 		rejectUnauthorized: false,

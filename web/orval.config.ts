@@ -1,7 +1,7 @@
 import { defineConfig } from 'orval';
 
 export default defineConfig({
-	pam: {
+	school_manager: {
 		input: './swagger.json',
 		output: {
 			target: 'src/api/endpoints.ts',

@@ -1,49 +1,65 @@
 {
-	"name": "school-manager-web",
-	"engines": {
-		"node": "~20",
-		"npm": "~10"
-	},
-	"scripts": {
-		"local": "next dev -p 3001",
-		"build": "next build",
-		"start": "next start",
-		"sync-api": "node scripts/sync-api.mjs && eslint --fix src/api",
-		"lint": "next lint",
-		"format": "prettier --write .",
-		"format-check": "prettier --check ."
-	},
-	"dependencies": {
-		"@heroicons/react": "latest",
-		"@hookform/resolvers": "latest",
-		"@tanstack/react-query": "latest",
-		"@types/node": "latest",
-		"@types/react": "latest",
-		"@types/react-dom": "latest",
-		"axios": "latest",
-		"clsx": "latest",
-		"date-fns": "latest",
-		"next": "latest",
-		"orval": "latest",
-		"prettier": "latest",
-		"react": "latest",
-		"react-dom": "latest",
-		"react-hook-form": "latest",
-		"tailwindcss": "latest",
-		"typescript": "~5.4",
-		"zod": "latest",
-		"zustand": "latest"
-	},
-	"overrides": {
-		"jsonpath-plus": "^10"
-	},
-	"devDependencies": {
-		"@tailwindcss/typography": "^0.5.15",
-		"daisyui": "^4.12.14",
-		"eslint": "latest",
-		"eslint-config-next": "latest",
-		"eslint-config-prettier": "latest",
-		"eslint-plugin-prettier": "latest",
-		"postcss": "latest"
-	}
+    "name": "m_web",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "engines": {
+        "node": "~20.x"
+    },
+    "scripts": {
+        "local": "dotenv -e ./env/.env vite",
+        "build": "vite build",
+        "lint": "eslint . --ext ts,tsx",
+        "lint:fix": "eslint . --ext ts,tsx --fix",
+        "test": "echo \"no tests\"",
+        "preview": "vite preview",
+        "check-types": "tsc --noEmit",
+        "sync-api": "node scripts/sync-api.mjs && eslint --fix src/api",
+        "vizualize": "npx vite-bundle-visualizer"
+    },
+    "dependencies": {
+        "@tailwindcss/typography": "latest",
+        "@tanstack/react-query": "latest",
+        "axios": "latest",
+        "clsx": "latest",
+        "daisyui": "latest",
+        "date-fns": "latest",
+        "jwt-decode": "latest",
+        "react": "latest",
+        "react-dom": "latest",
+        "react-hook-form": "latest",
+        "react-router-dom": "latest",
+        "usehooks-ts": "latest",
+        "uuid": "latest",
+        "vite-plugin-svgr": "latest",
+        "zod": "latest",
+        "zustand": "latest"
+    },
+    "devDependencies": {
+        "@types/node": "latest",
+        "@types/react": "latest",
+        "@types/react-dom": "latest",
+        "@types/uuid": "latest",
+        "@typescript-eslint/eslint-plugin": "latest",
+        "@typescript-eslint/parser": "latest",
+        "@vitejs/plugin-react": "latest",
+        "autoprefixer": "latest",
+        "dotenv-cli": "latest",
+        "eslint": "latest",
+        "eslint-config-prettier": "latest",
+        "eslint-plugin-prettier": "latest",
+        "eslint-plugin-react": "latest",
+        "eslint-plugin-react-hooks": "latest",
+        "eslint-plugin-react-refresh": "latest",
+        "orval": "latest",
+        "postcss": "latest",
+        "prettier": "latest",
+        "tailwindcss": "latest",
+        "tailwindcss-scoped-preflight": "latest",
+        "typescript": "latest",
+        "vite": "latest"
+    },
+    "overrides": {
+        "jsonpath-plus": ">10.0.0"
+    }
 }

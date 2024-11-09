@@ -1,0 +1,56 @@
+name: _deploy
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        type: string
+        default: "20"
+        required: false
+      environment:
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: "eu-west-1"
+          role-to-assume: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/aws-aicoach-${{ inputs.environment }}-iamrole-ghbotweb"
+
+      - name: Retrieve NPM cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install from cache
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+        env:
+          VITE_API_HOST: ${{ secrets.VITE_API_HOST }}
+          VITE_DEBUG_MODE: ${{ secrets.VITE_DEBUG_MODE }}
+          VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
+          VITE_WEB_URL: ${{ secrets.VITE_WEB_URL }}
+          VITE_TIMEOUT: ${{ secrets.VITE_TIMEOUT }}
+
+      - name: Deploy to S3
+        run: aws s3 sync ./dist s3://aws-aicoach-${{ inputs.environment }}-s3-botweb --delete
+
+      - name: Invalidate CloudFront Cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CDN_ID }} --paths "/*"

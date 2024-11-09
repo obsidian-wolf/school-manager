@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  install:
+    uses: ./.github/workflows/_install.yml
+    with:
+      node-version: "20"
+
+  deploy-dev:
+    needs: [install]
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit
+    with:
+      node-version: "20"
+      environment: dev
+
+  deploy-ppe:
+    needs: [deploy-dev]
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit
+    with:
+      node-version: "20"
+      environment: ppe
+
+  deploy-prd:
+    needs: [deploy-ppe]
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit
+    with:
+      node-version: "20"
+      environment: prd

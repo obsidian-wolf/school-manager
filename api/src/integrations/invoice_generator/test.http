@@ -1,0 +1,5 @@
+POST https://invoice-generator.com
+Content-Type: application/json
+Authorization: Bearer sk_4kdOSKBVGuRVeETFEKyg44Um125LT8Js
+
+{"from":"Nikolaus Ltd","to":"Acme, Corp.","logo":"https://example.com/img/logo-invoice.png","number":1,"items":[{"name":"Starter plan","quantity":1,"unit_cost":99}],"notes":"Thanks for your business!"}

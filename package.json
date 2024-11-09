@@ -1,0 +1,23 @@
+{
+	"name": "school-manager",
+	"engines": {
+		"node": "~20",
+		"npm": "~10"
+	},
+	"scripts": {
+		"install": "cd api && npm i && cd ../web && npm i",
+		"build": "npm run web:build && npm run api:build && npm run web:copy",
+		"local": "concurrently \"cd api && npm run local\" \"cd web && npm run local\"",
+		"start": "cd api && npm start",
+		"worker": "cd api && npm run worker",
+		"web:build": "cd web && npm run build",
+		"api:build": "cd api && npm run build",
+		"web:copy": "node scripts/copy_web"
+	},
+	"dependencies": {
+		"fs-extra": "latest"
+	},
+	"devDependencies": {
+		"concurrently": "latest"
+	}
+}

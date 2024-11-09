@@ -1,0 +1,9 @@
+{
+	"editor.formatOnSave": true,
+	"editor.rulers": [100],
+	"editor.tabSize": 4,
+	"files.associations": {
+		"*.css": "postcss"
+	},
+	"editor.insertSpaces": false
+}

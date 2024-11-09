@@ -1,0 +1,2353 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Record_string.string_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"QuestionnaireRequest": {
+				"properties": {
+					"answers": {
+						"items": {
+							"$ref": "#/components/schemas/Record_string.string_"
+						},
+						"type": "array"
+					},
+					"id_document": {
+						"type": "string"
+					},
+					"entry": {
+						"type": "string"
+					},
+					"product": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"answers",
+					"entry",
+					"product",
+					"email"
+				],
+				"type": "object"
+			},
+			"Record_string.any_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"Pick_PrescriberyPaymentRequest.Exclude_keyofPrescriberyPaymentRequest.assessment_token-or-plan-or-billing-or-shipping__": {
+				"properties": {
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"dob": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"lead_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"assessment_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"redirect_url": {
+						"type": "string"
+					},
+					"patient_id": {
+						"type": "string"
+					},
+					"isSyncUpgrade": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"first_name",
+					"last_name",
+					"email",
+					"dob",
+					"gender",
+					"redirect_url"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_PrescriberyPaymentRequest.assessment_token-or-plan-or-billing-or-shipping_": {
+				"$ref": "#/components/schemas/Pick_PrescriberyPaymentRequest.Exclude_keyofPrescriberyPaymentRequest.assessment_token-or-plan-or-billing-or-shipping__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"PrescriberyReassessmentMedication": {
+				"type": "string",
+				"enum": [
+					"Semaglutide_Tier_1_Increase_my_dose",
+					"Semaglutide_Tier_1_Stay_on_my_current_dose",
+					"Semaglutide_Tier_1_Switch_to_Tirzepatide",
+					"Semaglutide_Tier_2_Increase_my_dose",
+					"Semaglutide_Tier_2_Stay_on_my_current_dose",
+					"Semaglutide_Tier_2_Decrease_my_dose",
+					"Semaglutide_Tier_2_Switch_to_Tirzepatide",
+					"Semaglutide_Tier_3_Stay_on_my_current_dose",
+					"Semaglutide_Tier_3_Decrease_my_dose",
+					"Semaglutide_Tier_3_Switch_to_Tirzepatide",
+					"Tirzepatide_Tier_1_Increase_my_dose",
+					"Tirzepatide_Tier_1_Stay_on_my_current_dose",
+					"Tirzepatide_Tier_1_Switch_to_Semaglutide",
+					"Tirzepatide_Tier_2_Increase_my_dose",
+					"Tirzepatide_Tier_2_Stay_on_my_current_dose",
+					"Tirzepatide_Tier_2_Decrease_my_dose",
+					"Tirzepatide_Tier_2_Switch_to_Semaglutide",
+					"Tirzepatide_Tier_3_Stay_on_my_current_dose",
+					"Tirzepatide_Tier_3_Decrease_my_dose",
+					"Tirzepatide_Tier_3_Switch_to_Semaglutide"
+				]
+			},
+			"PrescriberyReassessmentPaymentRequest": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Omit_PrescriberyPaymentRequest.assessment_token-or-plan-or-billing-or-shipping_"
+					},
+					{
+						"properties": {
+							"assessment_token": {
+								"type": "string"
+							},
+							"plan": {
+								"properties": {
+									"medication": {
+										"$ref": "#/components/schemas/PrescriberyReassessmentMedication"
+									},
+									"amount": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"medication"
+								],
+								"type": "object"
+							}
+						},
+						"required": [
+							"assessment_token",
+							"plan"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"SearchPatient": {
+				"properties": {
+					"created_date": {
+						"type": "string"
+					},
+					"weight": {
+						"type": "number",
+						"format": "double"
+					},
+					"height": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"zip_code": {
+						"type": "string"
+					},
+					"dob": {
+						"type": "string"
+					},
+					"patient_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"full_name": {
+						"type": "string"
+					},
+					"record_id": {
+						"type": "string"
+					},
+					"active": {
+						"type": "string",
+						"enum": [
+							"active",
+							"inactive"
+						]
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"mobile": {
+						"type": "string"
+					},
+					"created_time": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string",
+						"enum": [
+							"male",
+							"female"
+						]
+					}
+				},
+				"required": [
+					"created_date",
+					"weight",
+					"height",
+					"city",
+					"state",
+					"zip_code",
+					"dob",
+					"patient_id",
+					"full_name",
+					"record_id",
+					"active",
+					"last_name",
+					"mobile",
+					"created_time",
+					"email",
+					"first_name",
+					"gender"
+				],
+				"type": "object"
+			},
+			"Pick_User.Exclude_keyofUser.dob-or-gender-or-wp-or-dealerId__": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"prescriberyPatient": {
+						"$ref": "#/components/schemas/SearchPatient"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"middleName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"firstName",
+					"lastName",
+					"phone"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_User.dob-or-gender-or-wp-or-dealerId_": {
+				"$ref": "#/components/schemas/Pick_User.Exclude_keyofUser.dob-or-gender-or-wp-or-dealerId__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"USStateCode": {
+				"type": "string",
+				"enum": [
+					"AL",
+					"AK",
+					"AZ",
+					"AR",
+					"CA",
+					"CO",
+					"CT",
+					"DE",
+					"FL",
+					"GA",
+					"HI",
+					"ID",
+					"IL",
+					"IN",
+					"IA",
+					"KS",
+					"KY",
+					"LA",
+					"ME",
+					"MD",
+					"MA",
+					"MI",
+					"MN",
+					"MS",
+					"MO",
+					"MT",
+					"NE",
+					"NV",
+					"NH",
+					"NJ",
+					"NM",
+					"NY",
+					"NC",
+					"ND",
+					"OH",
+					"OK",
+					"OR",
+					"PA",
+					"RI",
+					"SC",
+					"SD",
+					"TN",
+					"TX",
+					"UT",
+					"VT",
+					"VA",
+					"WA",
+					"WV",
+					"WI",
+					"WY"
+				]
+			},
+			"Address": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/Omit_User.dob-or-gender-or-wp-or-dealerId_"
+					},
+					{
+						"properties": {
+							"stateCode": {
+								"$ref": "#/components/schemas/USStateCode"
+							},
+							"postcode": {
+								"type": "string"
+							},
+							"city": {
+								"type": "string"
+							},
+							"address2": {
+								"type": "string"
+							},
+							"address": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"stateCode",
+							"postcode",
+							"city",
+							"address"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"BillingAndShippingInfoRequest": {
+				"properties": {
+					"billing": {
+						"$ref": "#/components/schemas/Address"
+					},
+					"shipping": {
+						"$ref": "#/components/schemas/Address"
+					}
+				},
+				"required": [
+					"billing",
+					"shipping"
+				],
+				"type": "object"
+			},
+			"ParsedFormidableUser": {
+				"properties": {
+					"stateCode": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"postcode": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"address2": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"sponsor_id": {
+						"type": "string"
+					},
+					"brand_id": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"dealer_id": {
+						"type": "string"
+					},
+					"dob": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"middle_name": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"stateCode",
+					"state",
+					"postcode",
+					"city",
+					"address2",
+					"address",
+					"sponsor_id",
+					"brand_id",
+					"phone",
+					"dealer_id",
+					"dob",
+					"gender",
+					"email",
+					"last_name",
+					"middle_name",
+					"first_name",
+					"id"
+				],
+				"type": "object"
+			},
+			"WPUser": {
+				"properties": {
+					"_links": {
+						"properties": {
+							"collection": {
+								"items": {
+									"properties": {
+										"href": {
+											"type": "string"
+										}
+									},
+									"type": "object"
+								},
+								"type": "array"
+							},
+							"self": {
+								"items": {
+									"properties": {
+										"href": {
+											"type": "string"
+										}
+									},
+									"type": "object"
+								},
+								"type": "array"
+							}
+						},
+						"type": "object"
+					},
+					"woocommerce_meta": {
+						"properties": {
+							"android_app_banner_dismissed": {
+								"type": "string"
+							},
+							"help_panel_highlight_shown": {
+								"type": "string"
+							},
+							"task_list_tracked_started_tasks": {
+								"type": "string"
+							},
+							"homepage_stats": {
+								"type": "string"
+							},
+							"homepage_layout": {
+								"type": "string"
+							},
+							"dashboard_leaderboard_rows": {
+								"type": "string"
+							},
+							"dashboard_chart_interval": {
+								"type": "string"
+							},
+							"dashboard_chart_type": {
+								"type": "string"
+							},
+							"dashboard_sections": {
+								"type": "string"
+							},
+							"variations_report_columns": {
+								"type": "string"
+							},
+							"taxes_report_columns": {
+								"type": "string"
+							},
+							"revenue_report_columns": {
+								"type": "string"
+							},
+							"products_report_columns": {
+								"type": "string"
+							},
+							"orders_report_columns": {
+								"type": "string"
+							},
+							"customers_report_columns": {
+								"type": "string"
+							},
+							"coupons_report_columns": {
+								"type": "string"
+							},
+							"categories_report_columns": {
+								"type": "string"
+							},
+							"activity_panel_reviews_last_read": {
+								"type": "string"
+							},
+							"activity_panel_inbox_last_read": {
+								"type": "string"
+							},
+							"variable_product_tour_shown": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					},
+					"is_super_admin": {
+						"type": "boolean"
+					},
+					"acf": {
+						"items": {},
+						"type": "array"
+					},
+					"meta": {
+						"properties": {
+							"dealer_id": {
+								"type": "string"
+							},
+							"persisted_preferences": {
+								"items": {},
+								"type": "array"
+							}
+						},
+						"type": "object"
+					},
+					"avatar_urls": {
+						"properties": {
+							"24": {
+								"type": "string"
+							},
+							"48": {
+								"type": "string"
+							},
+							"96": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					},
+					"extra_capabilities": {
+						"properties": {
+							"subscriber": {
+								"type": "boolean"
+							}
+						},
+						"type": "object"
+					},
+					"capabilities": {
+						"properties": {
+							"subscriber": {
+								"type": "boolean"
+							},
+							"vc_access_rules_post_types/cpt_layouts": {
+								"type": "boolean"
+							},
+							"vc_access_rules_post_types/page": {
+								"type": "boolean"
+							},
+							"vc_access_rules_post_types": {
+								"type": "string"
+							},
+							"level_0": {
+								"type": "boolean"
+							},
+							"read": {
+								"type": "boolean"
+							}
+						},
+						"type": "object"
+					},
+					"registered_date": {
+						"type": "string"
+					},
+					"roles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"nickname": {
+						"type": "string"
+					},
+					"locale": {
+						"type": "string"
+					},
+					"link": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object"
+			},
+			"Wp": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/WPUser"
+					},
+					"formidableUser": {
+						"$ref": "#/components/schemas/ParsedFormidableUser"
+					}
+				},
+				"type": "object"
+			},
+			"User": {
+				"properties": {
+					"phone": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"dob": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"dealerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"email": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"middleName": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"wp": {
+						"$ref": "#/components/schemas/Wp"
+					},
+					"prescriberyPatient": {
+						"$ref": "#/components/schemas/SearchPatient"
+					}
+				},
+				"required": [
+					"phone",
+					"gender",
+					"dob",
+					"dealerId",
+					"email",
+					"lastName",
+					"firstName",
+					"wp"
+				],
+				"type": "object"
+			},
+			"PersonalInfo": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"shipping": {
+						"$ref": "#/components/schemas/Address"
+					},
+					"billing": {
+						"$ref": "#/components/schemas/Address"
+					}
+				},
+				"required": [
+					"user",
+					"shipping",
+					"billing"
+				],
+				"type": "object"
+			},
+			"ProductPricing": {
+				"properties": {
+					"uplineVolume": {
+						"type": "number",
+						"format": "double"
+					},
+					"psvAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"wholesalePrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"retailPrice": {
+						"type": "number",
+						"format": "double",
+						"description": "Price per month supply."
+					}
+				},
+				"required": [
+					"uplineVolume",
+					"psvAmount",
+					"wholesalePrice",
+					"retailPrice"
+				],
+				"type": "object"
+			},
+			"ProductId": {
+				"type": "string",
+				"enum": [
+					"semaglutide_tier_1",
+					"semaglutide_tier_2",
+					"semaglutide_tier_3",
+					"tirzepatide_tier_1",
+					"tirzepatide_tier_2",
+					"tirzepatide_tier_3",
+					"b12",
+					"nad_injection",
+					"nad_injection_1",
+					"nad_injection_2",
+					"nad_nasal_spray",
+					"sermorelin",
+					"synapsin",
+					"pt_141_injection",
+					"pt_141_nasal_spray",
+					"semaglutide_sublingual_tier_1",
+					"semaglutide_sublingual_tier_2",
+					"semaglutide_sublingual_tier_3",
+					"sermorelin_tablets",
+					"semaglutide_microdose",
+					"tirzepatide_microdose"
+				]
+			},
+			"TrinityProduct": {
+				"type": "string",
+				"enum": [
+					"Product 1",
+					"Product 2",
+					"Product 3",
+					"Product 4",
+					"Product 5",
+					"Product 6",
+					"Product 7",
+					"Product 9",
+					"Product 10",
+					"Product 11",
+					"Product 12",
+					"Product 13",
+					"Product 14",
+					"Product 15",
+					"Product 16",
+					"Product 17",
+					"Product 18",
+					"Product 20",
+					"Product 22",
+					"Product 23",
+					"Product 24"
+				]
+			},
+			"Product": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/ProductPricing"
+					},
+					{
+						"properties": {
+							"trinityId": {
+								"$ref": "#/components/schemas/TrinityProduct",
+								"description": "Used by Trinity"
+							},
+							"prescriberySource": {
+								"type": "string"
+							},
+							"prescriberyTemplate": {
+								"type": "string",
+								"description": "Used by Prescribery"
+							},
+							"sku": {
+								"type": "string",
+								"description": "Used by WP"
+							},
+							"monthSupply": {
+								"type": "number",
+								"format": "double",
+								"description": "ex: 3 means a 3 month supply"
+							},
+							"payOverTimePlan": {
+								"items": {
+									"type": "number",
+									"format": "double"
+								},
+								"type": "array",
+								"description": "Optional. If not present, the product is not available for installment payments.  Each number represents a month."
+							},
+							"url": {
+								"type": "string",
+								"description": "Image URL."
+							},
+							"tier": {
+								"type": "number",
+								"format": "double"
+							},
+							"type": {
+								"type": "string",
+								"enum": [
+									"medication"
+								],
+								"nullable": false
+							},
+							"name": {
+								"type": "string"
+							},
+							"id": {
+								"$ref": "#/components/schemas/ProductId"
+							}
+						},
+						"required": [
+							"monthSupply",
+							"url",
+							"type",
+							"name",
+							"id"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"OrderDetails": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/PersonalInfo"
+					},
+					{
+						"properties": {
+							"payOverTimePlan": {
+								"items": {
+									"type": "number",
+									"format": "double"
+								},
+								"type": "array"
+							},
+							"fullPrice": {
+								"type": "number",
+								"format": "double"
+							},
+							"products": {
+								"items": {
+									"$ref": "#/components/schemas/Product"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"payOverTimePlan",
+							"fullPrice",
+							"products"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"AdminLoginRequest": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"id"
+				],
+				"type": "object"
+			},
+			"Patient": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"smoking_status": {
+						"type": "string"
+					},
+					"patient_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"record_id": {
+						"type": "string"
+					},
+					"profile_img": {
+						"type": "string"
+					},
+					"postal_code": {
+						"type": "string"
+					},
+					"marital_status": {
+						"type": "string"
+					},
+					"mobile": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"identifier": {
+						"properties": {
+							"value": {
+								"type": "string"
+							},
+							"use": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"value",
+							"use"
+						],
+						"type": "object"
+					},
+					"weigh": {
+						"type": "string"
+					},
+					"height": {
+						"type": "string"
+					},
+					"gender": {
+						"type": "string"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"employment_status": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"dob": {
+						"type": "string"
+					},
+					"district": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"communication_type": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"blood_group": {
+						"type": "string"
+					},
+					"address_line2": {
+						"type": "string"
+					},
+					"address_line1": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"status",
+					"state",
+					"smoking_status",
+					"record_id",
+					"profile_img",
+					"postal_code",
+					"marital_status",
+					"mobile",
+					"last_name",
+					"identifier",
+					"weigh",
+					"height",
+					"gender",
+					"first_name",
+					"employment_status",
+					"email",
+					"dob",
+					"country",
+					"city",
+					"address_line1"
+				],
+				"type": "object"
+			},
+			"AvailableSlot": {
+				"properties": {
+					"member_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"end_time": {
+						"type": "string"
+					},
+					"start_time": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"member_id",
+					"end_time",
+					"start_time"
+				],
+				"type": "object"
+			},
+			"Record_string.AvailableSlot-Array_": {
+				"properties": {},
+				"additionalProperties": {
+					"items": {
+						"$ref": "#/components/schemas/AvailableSlot"
+					},
+					"type": "array"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"AvailableSlots": {
+				"$ref": "#/components/schemas/Record_string.AvailableSlot-Array_"
+			},
+			"CreateSyncAppointmentRequest": {
+				"properties": {
+					"endTime": {
+						"type": "string"
+					},
+					"startTime": {
+						"type": "string"
+					},
+					"startDate": {
+						"type": "string"
+					},
+					"memberId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"endTime",
+					"startTime",
+					"startDate",
+					"memberId"
+				],
+				"type": "object"
+			},
+			"OrderInstallmentDetails": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/PersonalInfo"
+					},
+					{
+						"properties": {
+							"amount": {
+								"type": "number",
+								"format": "double"
+							},
+							"product": {
+								"$ref": "#/components/schemas/Product"
+							},
+							"installmentIndex": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"amount",
+							"product",
+							"installmentIndex"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"ReassessmentFromMedication": {
+				"type": "string",
+				"enum": [
+					"Semaglutide_Tier_1",
+					"Semaglutide_Tier_2",
+					"Semaglutide_Tier_3",
+					"Semaglutide_Sublingual_Tier_1",
+					"Semaglutide_Sublingual_Tier_2",
+					"Semaglutide_Sublingual_Tier_3",
+					"Tirzepatide_Tier_1",
+					"Tirzepatide_Tier_2",
+					"Tirzepatide_Tier_3"
+				]
+			},
+			"ReassessmentToMedication": {
+				"type": "string",
+				"enum": [
+					"Semaglutide_Tier_2",
+					"Semaglutide_Tier_3",
+					"Semaglutide_Sublingual_Tier_2",
+					"Semaglutide_Sublingual_Tier_3",
+					"Tirzepatide_Tier_2",
+					"Tirzepatide_Tier_3"
+				]
+			},
+			"PrescriberyMedication": {
+				"$ref": "#/components/schemas/PrescriberyReassessmentMedication"
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "apiKey",
+				"name": "authorization",
+				"in": "header"
+			}
+		}
+	},
+	"info": {
+		"title": "elliemd_api",
+		"version": "1.0",
+		"contact": {}
+	},
+	"paths": {
+		"/user/questionnaire": {
+			"post": {
+				"operationId": "CreateQuestionnaire",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/QuestionnaireRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/questionnaire/pay": {
+			"post": {
+				"operationId": "GetQuestionnairePaymentUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": [
+							"admin"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"forceCreate": {
+										"type": "boolean"
+									},
+									"entry": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"entry"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/prescribery/webhook": {
+			"post": {
+				"operationId": "Webhook",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Prescribery"
+				],
+				"security": [
+					{
+						"jwt": [
+							"prescribery"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Record_string.any_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/prescribery/pay": {
+			"post": {
+				"operationId": "GetReassessmentCheckoutUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Prescribery"
+				],
+				"security": [
+					{
+						"jwt": [
+							"prescribery"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PrescriberyReassessmentPaymentRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/pay/billing-and-shipping/{orderId}": {
+			"post": {
+				"operationId": "SubmitBillingAndShipping",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Details",
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BillingAndShippingInfoRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/pay/details/{orderId}": {
+			"get": {
+				"operationId": "GetOrderDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OrderDetails"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/pay/nexio-pay-in-full/{orderId}/url": {
+			"get": {
+				"operationId": "GetNexioPayInFullPaymentUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"description": "Nexio pay in full",
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "reset",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/pay/nexio-pay-in-full/{orderId}/process": {
+			"post": {
+				"operationId": "ProcessNexioPayInFullPayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nexioPaymentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/pay/nexio-pay-over-time/{orderId}/url": {
+			"get": {
+				"operationId": "GetNexioPayOverTimePaymentUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"description": "Nexio pay over time",
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "reset",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/pay/nexio-pay-over-time/{orderId}/process": {
+			"post": {
+				"operationId": "ProcessNexioPayOverTimePayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nexioPaymentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/pay/afterpay/confirm": {
+			"get": {
+				"operationId": "ProcessAfterpayPaymentConfirm",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"description": "Afterpay",
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "orderToken",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/pay/afterpay/cancel": {
+			"get": {
+				"operationId": "ProcessAfterpayPaymentCancel",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "orderToken",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/pay/afterpay/checkout/{orderId}": {
+			"get": {
+				"operationId": "GetAfterpayCheckoutUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pay"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/order/cancel/{orderId}": {
+			"post": {
+				"operationId": "CancelOrder",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Order"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/heartbeat": {
+			"get": {
+				"operationId": "ClassHeartbeat",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"port": {
+											"type": "string"
+										},
+										"date": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message",
+										"port",
+										"date"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Ping .. pong",
+				"tags": [
+					"Heartbeat"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/admin-login": {
+			"put": {
+				"operationId": "AdminLogin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminLoginRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/test": {
+			"post": {
+				"operationId": "Test",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/trinity-submissions": {
+			"get": {
+				"operationId": "ProcessSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"items": {},
+											"type": "array"
+										},
+										{
+											"$ref": "#/components/schemas/Record_string.any_"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "preview",
+						"required": false,
+						"schema": {
+							"default": true,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/auth/demo": {
+			"get": {
+				"operationId": "Demo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"prescribery": {
+											"$ref": "#/components/schemas/Patient"
+										},
+										"wpUser": {
+											"$ref": "#/components/schemas/Wp"
+										}
+									},
+									"required": [
+										"prescribery",
+										"wpUser"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "dob",
+						"required": true,
+						"schema": {
+							"format": "date-time",
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/appointment/{orderId}": {
+			"get": {
+				"operationId": "GetAppointments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AvailableSlots"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Appointment"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateSyncAppointment",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Appointment"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateSyncAppointmentRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ad_hoc/{orderId}/details": {
+			"get": {
+				"operationId": "GetAdHocOrderInstallment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OrderInstallmentDetails"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AdHoc"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "installmentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/ad_hoc/{orderId}/process": {
+			"post": {
+				"operationId": "ProcessAdHocNexioPayment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AdHoc"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "installmentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "nexioPaymentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/ad_hoc/{orderId}/nexio-url": {
+			"get": {
+				"operationId": "GetNexioAdHocPaymentUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AdHoc"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "orderId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "installmentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "reset",
+						"required": false,
+						"schema": {
+							"default": false,
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/admin/create-ad-hoc-order-installment": {
+			"post": {
+				"operationId": "CreateAdHocOrderInstallment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/ProductId"
+						}
+					},
+					{
+						"in": "query",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/generate-receipt": {
+			"get": {
+				"operationId": "GenerateReceipt",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "amount",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/ProductId"
+						}
+					},
+					{
+						"in": "query",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "date",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/upgrade-reassessment": {
+			"get": {
+				"operationId": "UpgradeOrder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "medicationFrom",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/ReassessmentFromMedication"
+						}
+					},
+					{
+						"in": "query",
+						"name": "medicationTo",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/ReassessmentToMedication"
+						}
+					}
+				]
+			}
+		},
+		"/admin/recreate-reassessment": {
+			"get": {
+				"operationId": "RecreateReassessment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "medication",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/PrescriberyMedication"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

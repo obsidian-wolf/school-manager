@@ -1,0 +1,47 @@
+{
+	"name": "school-manager-web",
+	"engines": {
+		"node": "~20",
+		"npm": "~10"
+	},
+	"scripts": {
+		"local": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"sync-api": "node scripts/sync-api.mjs && eslint --fix src/api",
+		"lint": "next lint",
+		"format": "prettier --write .",
+		"format-check": "prettier --check ."
+	},
+	"dependencies": {
+		"@heroicons/react": "latest",
+		"@hookform/resolvers": "latest",
+		"@tanstack/react-query": "latest",
+		"@types/node": "latest",
+		"@types/react": "latest",
+		"@types/react-dom": "latest",
+		"axios": "latest",
+		"clsx": "latest",
+		"date-fns": "latest",
+		"next": "latest",
+		"orval": "latest",
+		"prettier": "latest",
+		"react": "latest",
+		"react-dom": "latest",
+		"react-hook-form": "latest",
+		"tailwindcss": "latest",
+		"typescript": "~5.4",
+		"zod": "latest",
+		"zustand": "latest"
+	},
+	"overrides": {
+		"jsonpath-plus": "^10"
+	},
+	"devDependencies": {
+		"eslint": "latest",
+		"eslint-config-next": "latest",
+		"eslint-config-prettier": "latest",
+		"eslint-plugin-prettier": "latest",
+		"postcss": "latest"
+	}
+}

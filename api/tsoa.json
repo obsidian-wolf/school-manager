@@ -1,0 +1,22 @@
+{
+	"entryFile": "src/index.ts",
+	"noImplicitAdditionalProperties": "throw-on-extras",
+	"controllerPathGlobs": ["src/**/*_controller.ts"],
+	"spec": {
+		"outputDirectory": "src/infrastructure/server",
+		"specVersion": 3,
+		"version": "1.0",
+		"securityDefinitions": {
+			"jwt": {
+				"type": "apiKey",
+				"name": "authorization",
+				"in": "header"
+			}
+		}
+	},
+	"routes": {
+		"routesDir": "src/infrastructure/server",
+		"authenticationModule": "./src/infrastructure/server/middlewares/authentication_middleware.ts"
+	},
+	"ignore": ["**/node_modules/**"]
+}

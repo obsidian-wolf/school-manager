@@ -1,0 +1,49 @@
+https://api.mdintegrations.com/v1/status/api
+https://api.mdintegrations.com/v1/partner/metadata/states/:state_id/cities?search=Denver
+
+GET https://api.mdintegrations.com/v1/partner/metadata/states
+Authorization: Bearer QXPukiS8s9Np3yhFhLAcpliirgYq2Lkc5NyaI3j0
+Content-Type: application/json
+
+POST https://api.mdintegrations.com/v1/partner/auth/token
+Content-Type: application/json
+Accept: application/json
+
+{
+	"grant_type": "client_credentials",
+	"client_id": "9f264479-bec6-4f5f-b3ba-282e70eee487",
+	"client_secret": "QXPukiS8s9Np3yhFhLAcpliirgYq2Lkc5NyaI3j0",
+	"scope": "*"
+}
+
+
+GET https://api.mdintegrations.com/v1/partner
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ZjI2NDQ3OS1iZWM2LTRmNWYtYjNiYS0yODJlNzBlZWU0ODciLCJqdGkiOiJmOTE4YTAwN2ZhM2FmZTAyZjFmYzY2NGI1NWZmMDljODc4OWM4NDBiYjE1ZGNiMTIxZjMxNWMzNDg3NGYxOWNjNDYyNzQyOGExMTQwNGE2YyIsImlhdCI6MTcyNjkzNDAyMS4yMzYwNDMsIm5iZiI6MTcyNjkzNDAyMS4yMzYwNDYsImV4cCI6MTcyNzAyMDQyMS4yMjg2ODIsInN1YiI6IiIsInNjb3BlcyI6WyIqIl19.Bm4RZX77OFgs_KHc9OiYUwbXIQJEiTfFCw2ceQCKvAlhjF4j8ts960kAbmf8Kxs6yHzRaUoBTG1XWBBpHbNwOYtVPeNL2GQ7yiJynB4Z51-7ztBRHxKCt6q7toUzzFlaYcOZv31xagDwHplJpe3ZeUxMiZ6Vs0FDxVTD1jYLfFEIShTDOg9lZz5zChR1BSRkCLWAJlBMMPO0t9mdMWAY5iCMRmkFUGdufvJPZj6IDVzIe3j_NJhIguexbfTlffFyWs7lUCz6sUY_9qxH5rAJQSYjcDRa_y1Xf0ZlyfwDxFMA1b_rC2R_faMimDRu7Sd_-PSaTX99a1T0BHvJagZQiq6aWYP3dgzCzL7uzhlFQMkehIv6Zy4LxZbM9h7Gzn4-zYDzEvTj1JQ_8JUBnpj25JqShsABtcGw-6sKYexAhXjmkC1P6_gLQ9YIVtX3BoiHnesHi8uSLCWRhS760mo7srl04HZb5B7GKxJVvO4owygnNAbsbTE8yrF-w0bN9HHNbz7tPNvm8dTYjfx66P4Mi5x2IKsZl3xajUdkv0-PM6bisLxzCrIAGPSfXpqujoAQg43dkWf-1H4H11gtZRYArWXVFGNjpW1z8MbRzvl0RpyzmzFIY2hvFS2pK_0Sl0XOqbfydXRVy95OsgwMc_c1eODf7V5X2DTZnC-RLFdMwCQ
+
+POST https://api.mdintegrations.com/v1/partner/patients
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5ZjI2NDQ3OS1iZWM2LTRmNWYtYjNiYS0yODJlNzBlZWU0ODciLCJqdGkiOiJmOTE4YTAwN2ZhM2FmZTAyZjFmYzY2NGI1NWZmMDljODc4OWM4NDBiYjE1ZGNiMTIxZjMxNWMzNDg3NGYxOWNjNDYyNzQyOGExMTQwNGE2YyIsImlhdCI6MTcyNjkzNDAyMS4yMzYwNDMsIm5iZiI6MTcyNjkzNDAyMS4yMzYwNDYsImV4cCI6MTcyNzAyMDQyMS4yMjg2ODIsInN1YiI6IiIsInNjb3BlcyI6WyIqIl19.Bm4RZX77OFgs_KHc9OiYUwbXIQJEiTfFCw2ceQCKvAlhjF4j8ts960kAbmf8Kxs6yHzRaUoBTG1XWBBpHbNwOYtVPeNL2GQ7yiJynB4Z51-7ztBRHxKCt6q7toUzzFlaYcOZv31xagDwHplJpe3ZeUxMiZ6Vs0FDxVTD1jYLfFEIShTDOg9lZz5zChR1BSRkCLWAJlBMMPO0t9mdMWAY5iCMRmkFUGdufvJPZj6IDVzIe3j_NJhIguexbfTlffFyWs7lUCz6sUY_9qxH5rAJQSYjcDRa_y1Xf0ZlyfwDxFMA1b_rC2R_faMimDRu7Sd_-PSaTX99a1T0BHvJagZQiq6aWYP3dgzCzL7uzhlFQMkehIv6Zy4LxZbM9h7Gzn4-zYDzEvTj1JQ_8JUBnpj25JqShsABtcGw-6sKYexAhXjmkC1P6_gLQ9YIVtX3BoiHnesHi8uSLCWRhS760mo7srl04HZb5B7GKxJVvO4owygnNAbsbTE8yrF-w0bN9HHNbz7tPNvm8dTYjfx66P4Mi5x2IKsZl3xajUdkv0-PM6bisLxzCrIAGPSfXpqujoAQg43dkWf-1H4H11gtZRYArWXVFGNjpW1z8MbRzvl0RpyzmzFIY2hvFS2pK_0Sl0XOqbfydXRVy95OsgwMc_c1eODf7V5X2DTZnC-RLFdMwCQ
+
+{
+   "prefix": "Sr",
+   "first_name": "Joe",
+   "last_name": "Doe",
+   "gender": 1,
+   "date_of_birth": "1983-10-17",
+   "phone_number": "(816) 679-2211",
+   "phone_type": 2,
+   "metadata": "patient number 200",
+   "email": "joe.doe@mdintegrations.com",
+   "driver_license_id": null,
+   "address": {
+      "address": "9071 E. Mississippi Ave",
+      "address2": "Apt 6C",
+      "zip_code": "80247",
+      "city_name": "Tazlima",
+      "state_name": "Ohio",
+   },
+   "pregnancy": false,
+}

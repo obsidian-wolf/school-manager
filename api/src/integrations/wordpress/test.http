@@ -1,0 +1,8 @@
+https://elliemd.com/wp-json/frm/v2/forms/1/entries?search=bjaneschmitt@gmail.com
+Authorization: Basic Y2pAZWxsaWVtZC5jb206UGpXSCBhQW1DIGhZRTMgdk5ybCB2Y2ZZIFdGT0k=
+
+https://elliemd.com/wp-json/wp/v2/users?context=edit&search=bjaneschmitt@gmail.com
+Authorization: Basic Y2pAZWxsaWVtZC5jb206UGpXSCBhQW1DIGhZRTMgdk5ybCB2Y2ZZIFdGT0k=
+
+const username = 'cj@elliemd.com'; // Your WordPress username
+const appPassword = 'PjWH aAmC hYE3 vNrl vcfY WFOI'; // Your generated application password

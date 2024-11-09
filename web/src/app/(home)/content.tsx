@@ -1,15 +1,24 @@
 'use client';
-import { useDeleteFile, useListFiles, useUploadFile } from '@/api/endpoints';
+import {
+	downloadFile,
+	useDeleteFile,
+	useEmbedFile,
+	useListFiles,
+	useUploadFile,
+} from '@/api/endpoints';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 
 export function HomePageContent() {
 	const list = useListFiles();
 	const uploadFile = useUploadFile();
+	const embedFile = useEmbedFile();
 	const [file, setFile] = useState<File | undefined>(undefined);
 	const fileUploadRef = useRef<HTMLInputElement>(null);
 	const deleteFile = useDeleteFile();
 	const [deletingFileId, setDeletingFileId] = useState<string | undefined>();
+
+	const isLoading = list.isLoading || uploadFile.isPending || embedFile.isPending;
 
 	async function onFileDelete(id: string) {
 		try {
@@ -30,7 +39,8 @@ export function HomePageContent() {
 				},
 			},
 			{
-				onSuccess: () => {
+				onSuccess: async (id) => {
+					await embedFile.mutateAsync({ id });
 					fileUploadRef.current!.value = '';
 					setFile(undefined);
 
@@ -38,6 +48,30 @@ export function HomePageContent() {
 				},
 			}
 		);
+	}
+
+	async function onDownloadFile(id: string, fileName: string) {
+		const data = await downloadFile(id);
+		// Create a Blob from the JSON string
+		const blob = new Blob([data as unknown as string], { type: 'application/json' });
+
+		// Create a link element
+		const link = document.createElement('a');
+
+		// Set the download attribute with a filename
+		link.download = fileName;
+
+		// Create a URL for the Blob and set it as the href attribute
+		link.href = window.URL.createObjectURL(blob);
+
+		// Append the link to the body
+		document.body.appendChild(link);
+
+		// Programmatically click the link to trigger the download
+		link.click();
+
+		// Remove the link from the document
+		document.body.removeChild(link);
 	}
 
 	return (
@@ -64,7 +98,10 @@ export function HomePageContent() {
 									<td>{file.id}</td>
 									<td>{file.file_name}</td>
 									<td className="space-x-2">
-										<button className={clsx(`btn btn-primary btn-sm`)}>
+										<button
+											className={clsx(`btn btn-primary btn-sm`)}
+											onClick={() => onDownloadFile(file.id, file.file_name)}
+										>
 											Download
 										</button>
 										<button
@@ -86,7 +123,7 @@ export function HomePageContent() {
 				<div className="divider"></div>
 				<div className="space-x-4">
 					<input
-						disabled={uploadFile.isPending}
+						disabled={isLoading}
 						onChange={(e) => {
 							// embed file
 							const file = e.target.files?.[0];
@@ -98,11 +135,11 @@ export function HomePageContent() {
 					/>
 					<button
 						className="btn btn-primary btn-sm"
-						disabled={!file || uploadFile.isPending}
+						disabled={!file || isLoading}
 						onClick={onUploadFile}
 					>
 						Upload
-						{uploadFile.isPending && <span className="loading loading-spinner"></span>}
+						{isLoading && <span className="loading loading-spinner"></span>}
 					</button>
 				</div>
 			</div>

@@ -30,8 +30,10 @@ export function ChatPageContent() {
                 type: 'launch',
             },
             state: {
-                api_token: 'Basic U2Nob29sOiRjaG9vIQ==',
-                debug_ind: 1,
+                variables: {
+                    api_token: 'Basic U2Nob29sOiRjaG9vIQ==',
+                    debug_ind: 1,
+                },
             },
             config: {
                 tts: false,

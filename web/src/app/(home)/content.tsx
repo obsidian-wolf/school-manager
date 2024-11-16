@@ -1,13 +1,8 @@
 'use client';
-import {
-    downloadFile,
-    useDeleteFile,
-    useEmbedFile,
-    useListFiles,
-    useUploadFile,
-} from '~/api/endpoints';
+import { useDeleteFile, useEmbedFile, useListFiles, useUploadFile } from '~/api/endpoints';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
+import customInstance from '~/api/custom_instance';
 
 export function HomePageContent() {
     const list = useListFiles();
@@ -17,6 +12,7 @@ export function HomePageContent() {
     const fileUploadRef = useRef<HTMLInputElement>(null);
     const deleteFile = useDeleteFile();
     const [deletingFileId, setDeletingFileId] = useState<string | undefined>();
+    const [downloadingFileId, setDownloadingFileId] = useState<string | undefined>();
 
     const isLoading = list.isLoading || uploadFile.isPending || embedFile.isPending;
 
@@ -51,9 +47,14 @@ export function HomePageContent() {
     }
 
     async function onDownloadFile(id: string, fileName: string) {
-        const data = await downloadFile(id);
-        // Create a Blob from the JSON string
-        const blob = new Blob([data as unknown as string], { type: 'application/json' });
+        setDownloadingFileId(id);
+        const data = await customInstance<ArrayBuffer>({
+            url: `/embedding/download/${id}`,
+            method: 'GET',
+            responseType: 'arraybuffer',
+        });
+
+        const blob = new Blob([data], { type: 'application/octet-stream' });
 
         // Create a link element
         const link = document.createElement('a');
@@ -62,7 +63,7 @@ export function HomePageContent() {
         link.download = fileName;
 
         // Create a URL for the Blob and set it as the href attribute
-        link.href = window.URL.createObjectURL(blob);
+        link.href = window.URL.createObjectURL(new File([blob], fileName));
 
         // Append the link to the body
         document.body.appendChild(link);
@@ -72,6 +73,7 @@ export function HomePageContent() {
 
         // Remove the link from the document
         document.body.removeChild(link);
+        setDownloadingFileId(undefined);
     }
 
     return (
@@ -101,9 +103,13 @@ export function HomePageContent() {
                                         <button
                                             type="button"
                                             className={clsx(`btn btn-primary btn-sm`)}
+                                            disabled={downloadingFileId === file.id}
                                             onClick={() => onDownloadFile(file.id, file.file_name)}
                                         >
                                             Download
+                                            {file.id === downloadingFileId && (
+                                                <span className="loading loading-spinner"></span>
+                                            )}
                                         </button>
                                         <button
                                             type="button"

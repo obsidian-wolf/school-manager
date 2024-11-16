@@ -5,8 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserId } from './pickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserId';
+import type { EmbeddingFileGetResponseAllOf } from './embeddingFileGetResponseAllOf';
 
-/**
- * Construct a type with the properties of T except for those in type K.
- */
-export type OmitEmbeddingFileTextOrUserId = PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserId;
+export type EmbeddingFileGetResponse = PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserId &
+    EmbeddingFileGetResponseAllOf;

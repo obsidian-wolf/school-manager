@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type CreateMessageParams = {
-    userId?: string;
+export type ConvertPdfToImage200 = {
+    extractedText: string;
+    images: string[];
 };

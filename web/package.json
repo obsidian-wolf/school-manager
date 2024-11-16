@@ -45,7 +45,7 @@
         "@vitejs/plugin-react": "latest",
         "autoprefixer": "latest",
         "dotenv-cli": "latest",
-        "eslint": "latest",
+        "eslint": "^8",
         "eslint-config-prettier": "latest",
         "eslint-plugin-prettier": "latest",
         "eslint-plugin-react": "latest",
@@ -55,7 +55,6 @@
         "postcss": "latest",
         "prettier": "latest",
         "tailwindcss": "latest",
-        "tailwindcss-scoped-preflight": "latest",
         "typescript": "latest",
         "vite": "latest"
     },

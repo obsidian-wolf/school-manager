@@ -13,6 +13,28 @@ const api = axios.create({
     },
 });
 
+/*
+{
+    "_id": "6749ea7dda309e1eb4f60984",
+    "password": "password!",
+    "contact_info": {
+      "phone_number": "01231212333",
+      "email": "cj@mail.com"
+    },
+    "surname": "Visser",
+    "first_name": "CJ",
+    "user_name": "string",
+    "parent_id": "6724cd433072a8be299591d1",
+    "is_admin": false,
+    "created_at": "2024-11-29T16:23:25.392Z",
+    "is_deleted": false,
+    "type": "api"
+  }*/
+
+const SCHOOL_ID = '6724cd433072a8be299591d1';
+const SCHOOL_PASSWORD = '$choo!';
+const API_TOKEN = btoa(`${SCHOOL_ID}:${SCHOOL_PASSWORD}`);
+
 export function ChatPageContent() {
     const chatId = useRef(new Date().getTime().toString());
 
@@ -31,8 +53,49 @@ export function ChatPageContent() {
             },
             state: {
                 variables: {
-                    api_token: 'Basic U2Nob29sOiRjaG9vIQ==',
+                    api_token: `Basic ${API_TOKEN}`,
                     debug_ind: 1,
+                    parent: {
+                        id: '6749ea7dda309e1eb4f60984',
+                        name: 'John Smith',
+                        email: 'john.smith@mail.com',
+                        phone: '123-456-7890',
+                    },
+                    students: [
+                        {
+                            id: '10001',
+                            name: 'John Smith',
+                            gender: 'Male',
+                            grade: '5',
+                            date_of_birth: '2012-06-15',
+                            teacher: {
+                                id: '101',
+                                name: 'Ms. Emily Johnson',
+                            },
+                        },
+                        {
+                            id: '10002',
+                            name: 'Sophia Brown',
+                            gender: 'Female',
+                            grade: '3',
+                            date_of_birth: '2014-09-23',
+                            teacher: {
+                                id: '102',
+                                name: 'Mr. David Lee',
+                            },
+                        },
+                        {
+                            id: '10003',
+                            name: 'Liam Martinez',
+                            gender: 'Male',
+                            grade: '2',
+                            date_of_birth: '2015-03-10',
+                            teacher: {
+                                id: '103',
+                                name: 'Ms. Sarah Taylor',
+                            },
+                        },
+                    ],
                 },
             },
             config: {

@@ -13,6 +13,7 @@ export interface UserGetResponse {
     first_name?: string;
     id: ObjectId;
     is_admin: boolean;
+    parent_id?: ObjectId;
     surname?: string;
     type: UserGetResponseType;
     user_name?: string;

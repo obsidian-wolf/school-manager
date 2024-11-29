@@ -9,4 +9,5 @@ import type { ReminderPostRequestCompulsory } from './reminderPostRequestCompuls
 export interface ReminderPostRequest {
     compulsory: ReminderPostRequestCompulsory;
     optional: unknown;
+    [key: string]: unknown;
 }

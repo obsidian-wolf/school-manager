@@ -11,4 +11,5 @@ export type UploadFileParams = {
      */
     userId?: string;
     callbackUrl?: string;
+    tag?: string;
 };

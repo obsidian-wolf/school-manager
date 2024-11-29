@@ -5,8 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type QueryEmbeddingsParams = {
-    input: string;
-    tag?: string;
-    embedding_file_id?: string;
+export type GetTotalCost200 = {
+    cost: number;
+    total_tokens: number;
 };

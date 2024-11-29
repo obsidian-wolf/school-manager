@@ -8,10 +8,14 @@ export const AXIOS_INSTANCE = Axios.create({
     },
 });
 
+const SCHOOL_ID = '6724cd433072a8be299591d1';
+const SCHOOL_PASSWORD = '$choo!';
+const API_TOKEN = btoa(`${SCHOOL_ID}:${SCHOOL_PASSWORD}`);
+
 AXIOS_INSTANCE.interceptors.request.use((config) => {
     // Add your request interceptors
     // add jwt token
-    config.headers.Authorization = `Basic U2Nob29sOiRjaG9vIQ==`;
+    config.headers.Authorization = `Basic ${API_TOKEN}`;
     return config;
 });
 

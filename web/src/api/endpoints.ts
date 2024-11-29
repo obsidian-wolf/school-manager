@@ -28,12 +28,14 @@ import type {
     CreateListParams,
     CreateMessageParams,
     CreateReminderParams,
+    CreateUserParams,
     DeleteMessagesParams,
     DeleteUserParams,
     EmbeddingFileGetResponse,
     EmbeddingFileListResponse,
     GetFlightBookingUrlParams,
     GetFlightOffersParams,
+    GetTotalCost200,
     GetTriviaBankParams,
     GetUserParams,
     GetWeather200,
@@ -47,8 +49,6 @@ import type {
     MessagePostRequest,
     NotifyWhatsappParams,
     QueryEmbeddings200,
-    QueryEmbeddingsById200,
-    QueryEmbeddingsByIdParams,
     QueryEmbeddingsParams,
     ReminderGetResponse,
     ReminderPostRequest,
@@ -59,6 +59,7 @@ import type {
     UploadFileParams,
     UpsertTriviaBankParams,
     UserGetResponse,
+    UserPostRequest,
     UserPutRequest,
 } from './model';
 import { customInstance } from './custom_instance';
@@ -228,6 +229,72 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
 
     return query;
 }
+
+/**
+ * Creates the user as a child of the authenticated user
+ * @summary Create the user
+ */
+export const createUser = (userPostRequest: UserPostRequest, params?: CreateUserParams) => {
+    return customInstance<UserGetResponse>({
+        url: `/user`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: userPostRequest,
+        params,
+    });
+};
+
+export const getCreateUserMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof createUser>>,
+        TError,
+        { data: UserPostRequest; params?: CreateUserParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof createUser>>,
+    TError,
+    { data: UserPostRequest; params?: CreateUserParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof createUser>>,
+        { data: UserPostRequest; params?: CreateUserParams }
+    > = (props) => {
+        const { data, params } = props ?? {};
+
+        return createUser(data, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>;
+export type CreateUserMutationBody = UserPostRequest;
+export type CreateUserMutationError = unknown;
+
+/**
+ * @summary Create the user
+ */
+export const useCreateUser = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof createUser>>,
+        TError,
+        { data: UserPostRequest; params?: CreateUserParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof createUser>>,
+    TError,
+    { data: UserPostRequest; params?: CreateUserParams },
+    TContext
+> => {
+    const mutationOptions = getCreateUserMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
 
 /**
  * Updates the user by the provided user id
@@ -2820,138 +2887,9 @@ export const useSummarize = <TError = unknown, TContext = unknown>(options?: {
  * Query embeddings
  * @summary Query embeddings
  */
-export const queryEmbeddingsById = (
-    id: string,
-    params: QueryEmbeddingsByIdParams,
-    signal?: AbortSignal,
-) => {
-    return customInstance<QueryEmbeddingsById200>({
-        url: `/embedding/${id}/query`,
-        method: 'GET',
-        params,
-        signal,
-    });
-};
-
-export const getQueryEmbeddingsByIdQueryKey = (id: string, params: QueryEmbeddingsByIdParams) => {
-    return [`/embedding/${id}/query`, ...(params ? [params] : [])] as const;
-};
-
-export const getQueryEmbeddingsByIdQueryOptions = <
-    TData = Awaited<ReturnType<typeof queryEmbeddingsById>>,
-    TError = unknown,
->(
-    id: string,
-    params: QueryEmbeddingsByIdParams,
-    options?: {
-        query?: Partial<
-            UseQueryOptions<Awaited<ReturnType<typeof queryEmbeddingsById>>, TError, TData>
-        >;
-    },
-) => {
-    const { query: queryOptions } = options ?? {};
-
-    const queryKey = queryOptions?.queryKey ?? getQueryEmbeddingsByIdQueryKey(id, params);
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof queryEmbeddingsById>>> = ({ signal }) =>
-        queryEmbeddingsById(id, params, signal);
-
-    return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof queryEmbeddingsById>>,
-        TError,
-        TData
-    > & { queryKey: QueryKey };
-};
-
-export type QueryEmbeddingsByIdQueryResult = NonNullable<
-    Awaited<ReturnType<typeof queryEmbeddingsById>>
->;
-export type QueryEmbeddingsByIdQueryError = unknown;
-
-export function useQueryEmbeddingsById<
-    TData = Awaited<ReturnType<typeof queryEmbeddingsById>>,
-    TError = unknown,
->(
-    id: string,
-    params: QueryEmbeddingsByIdParams,
-    options: {
-        query: Partial<
-            UseQueryOptions<Awaited<ReturnType<typeof queryEmbeddingsById>>, TError, TData>
-        > &
-            Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof queryEmbeddingsById>>,
-                    TError,
-                    TData
-                >,
-                'initialData'
-            >;
-    },
-): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useQueryEmbeddingsById<
-    TData = Awaited<ReturnType<typeof queryEmbeddingsById>>,
-    TError = unknown,
->(
-    id: string,
-    params: QueryEmbeddingsByIdParams,
-    options?: {
-        query?: Partial<
-            UseQueryOptions<Awaited<ReturnType<typeof queryEmbeddingsById>>, TError, TData>
-        > &
-            Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof queryEmbeddingsById>>,
-                    TError,
-                    TData
-                >,
-                'initialData'
-            >;
-    },
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useQueryEmbeddingsById<
-    TData = Awaited<ReturnType<typeof queryEmbeddingsById>>,
-    TError = unknown,
->(
-    id: string,
-    params: QueryEmbeddingsByIdParams,
-    options?: {
-        query?: Partial<
-            UseQueryOptions<Awaited<ReturnType<typeof queryEmbeddingsById>>, TError, TData>
-        >;
-    },
-): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-/**
- * @summary Query embeddings
- */
-
-export function useQueryEmbeddingsById<
-    TData = Awaited<ReturnType<typeof queryEmbeddingsById>>,
-    TError = unknown,
->(
-    id: string,
-    params: QueryEmbeddingsByIdParams,
-    options?: {
-        query?: Partial<
-            UseQueryOptions<Awaited<ReturnType<typeof queryEmbeddingsById>>, TError, TData>
-        >;
-    },
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-    const queryOptions = getQueryEmbeddingsByIdQueryOptions(id, params, options);
-
-    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-    query.queryKey = queryOptions.queryKey;
-
-    return query;
-}
-
-/**
- * Query embeddings
- * @summary Query embeddings
- */
 export const queryEmbeddings = (params: QueryEmbeddingsParams, signal?: AbortSignal) => {
     return customInstance<QueryEmbeddings200>({
-        url: `/embedding/query`,
+        url: `/embedding/rag/query`,
         method: 'GET',
         params,
         signal,
@@ -2959,7 +2897,7 @@ export const queryEmbeddings = (params: QueryEmbeddingsParams, signal?: AbortSig
 };
 
 export const getQueryEmbeddingsQueryKey = (params: QueryEmbeddingsParams) => {
-    return [`/embedding/query`, ...(params ? [params] : [])] as const;
+    return [`/embedding/rag/query`, ...(params ? [params] : [])] as const;
 };
 
 export const getQueryEmbeddingsQueryOptions = <
@@ -3139,6 +3077,93 @@ export const useConvertPdfToImage = <TError = unknown, TContext = unknown>(optio
 
     return useMutation(mutationOptions);
 };
+
+/**
+ * Get total cost of embedding
+ * @summary Get total cost of embedding
+ */
+export const getTotalCost = (id: string, signal?: AbortSignal) => {
+    return customInstance<GetTotalCost200>({ url: `/embedding/${id}/cost`, method: 'GET', signal });
+};
+
+export const getGetTotalCostQueryKey = (id: string) => {
+    return [`/embedding/${id}/cost`] as const;
+};
+
+export const getGetTotalCostQueryOptions = <
+    TData = Awaited<ReturnType<typeof getTotalCost>>,
+    TError = unknown,
+>(
+    id: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTotalCost>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetTotalCostQueryKey(id);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTotalCost>>> = ({ signal }) =>
+        getTotalCost(id, signal);
+
+    return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getTotalCost>>,
+        TError,
+        TData
+    > & { queryKey: QueryKey };
+};
+
+export type GetTotalCostQueryResult = NonNullable<Awaited<ReturnType<typeof getTotalCost>>>;
+export type GetTotalCostQueryError = unknown;
+
+export function useGetTotalCost<TData = Awaited<ReturnType<typeof getTotalCost>>, TError = unknown>(
+    id: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTotalCost>>, TError, TData>> &
+            Pick<
+                DefinedInitialDataOptions<Awaited<ReturnType<typeof getTotalCost>>, TError, TData>,
+                'initialData'
+            >;
+    },
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetTotalCost<TData = Awaited<ReturnType<typeof getTotalCost>>, TError = unknown>(
+    id: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTotalCost>>, TError, TData>> &
+            Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getTotalCost>>,
+                    TError,
+                    TData
+                >,
+                'initialData'
+            >;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetTotalCost<TData = Awaited<ReturnType<typeof getTotalCost>>, TError = unknown>(
+    id: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTotalCost>>, TError, TData>>;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary Get total cost of embedding
+ */
+
+export function useGetTotalCost<TData = Awaited<ReturnType<typeof getTotalCost>>, TError = unknown>(
+    id: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTotalCost>>, TError, TData>>;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getGetTotalCostQueryOptions(id, options);
+
+    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
 
 /**
  * Gets or creates a user by phone number and returns the starting conversation details

@@ -57,8 +57,8 @@ export function ChatPageContent() {
                     debug_ind: 1,
                     parent: {
                         id: '6749ea7dda309e1eb4f60984',
-                        name: 'John Smith',
-                        email: 'john.smith@mail.com',
+                        name: 'CJ Visser',
+                        email: 'cj.visser@mail.com',
                         phone: '123-456-7890',
                     },
                     students: [

@@ -3,15 +3,15 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
-import fs from 'fs/promises';
 import path from 'path';
 
 import errorMiddleware from './middlewares/error_middlewares';
 import { RegisterRoutes } from './routes';
 import { connect as connectRepo } from '../db';
-import config from '../../config';
 import pino, { stdSerializers } from 'pino-http';
 import { logger } from '../../utils/logger';
+import { seedTeachers } from '../../services/teachers';
+import { seedParents } from '../../services/user';
 
 export const SWAGGER_URL = '/docs';
 
@@ -71,7 +71,7 @@ export const start = async (port = 3000): Promise<void> => {
 		}),
 	);
 
-	console.log('CORS configured for:', config.WEB_URL);
+	// console.log('CORS configured for:', config.WEB_URL);
 
 	/**
 	 * Expose the Swagger interface at the /docs endpoint.
@@ -104,55 +104,9 @@ export const start = async (port = 3000): Promise<void> => {
 	 */
 	server.use(errorMiddleware);
 
-	logger.info({
-		NODE_ENV: config.NODE_ENV,
-	});
-
-	if (config.NODE_ENV === 'production') {
-		server.use(express.static(path.resolve(process.cwd(), 'public/')));
-		server.get('/*', async (req, res) => {
-			const reqUrl = req.url;
-
-			// convert url "/path/to/resource" to "/path/to/resource.html"
-			let paths = reqUrl.split('/');
-			const lastPath = paths[paths.length - 1];
-			paths = paths.map((path) => path.split('?')[0]).filter((path) => path);
-			const baseUrl = paths.join('/') || 'index';
-
-			if (baseUrl.includes('.')) {
-				logger.info({
-					reqUrl,
-					message: 'Sending file',
-				});
-				// TODO: what does this really do?
-				return;
-			}
-
-			const filePathWithoutParams = path.resolve(process.cwd(), `public/${baseUrl}.html`);
-
-			logger.info({
-				reqUrl,
-				paths,
-				lastPath,
-				baseUrl,
-				filePathWithoutParams,
-			});
-
-			try {
-				await fs.access(filePathWithoutParams);
-				logger.info({
-					message: 'Sending file',
-				});
-				return res.sendFile(filePathWithoutParams);
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			} catch (error) {
-				logger.info({
-					message: 'Error accessing file',
-				});
-				return res.sendFile(path.resolve(process.cwd(), `public/error.html`));
-			}
-		});
-	}
+	// logger.info({
+	// 	NODE_ENV: NODE_ENV,
+	// });
 
 	/**
 	 * Connects to the db.
@@ -160,6 +114,11 @@ export const start = async (port = 3000): Promise<void> => {
 	try {
 		await connectRepo();
 		console.log(`You are now connected to the`); // ${connection.name} DB`);
+
+		console.log('Seeding...');
+		const teacherIds = await seedTeachers();
+		await seedParents(teacherIds);
+		console.log('Seeding complete');
 	} catch (err) {
 		console.warn('Failed to connect to db: ', err);
 		throw err;

@@ -14,7 +14,7 @@ export class HeartbeatController {
 		return {
 			date: new Date().toString(),
 			port: config.PORT,
-			message: `We are online, up, and running...  Go to ${config.APP_URL}/${SWAGGER_URL} to learn more...`,
+			message: `We are online, up, and running...  Go to /docs to learn more...`,
 		};
 	}
 }

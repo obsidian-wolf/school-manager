@@ -8,14 +8,20 @@
 import * as express from 'express';
 
 import { Unauthorized } from '../../common/errors';
-import { ADMIN_USERS, decodeJwtFromHeader } from '../../../auth';
+import { decodeJwtFromHeader } from '../../../auth';
+import { getUserFromId } from '../../../services/user';
+import { ObjectId, WithId } from 'mongodb';
+import { User } from '../../../types/parent';
+
+export type AuthedRequest = express.Request & { user: WithId<User> };
 
 export async function expressAuthentication(
 	req: express.Request,
 	securityName: string,
 	// scopes is required for TSOA, but we don't use it
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	scopes?: string[],
-): Promise<undefined> {
+) {
 	if (securityName !== 'jwt') {
 		return Promise.reject(Unauthorized);
 	}
@@ -26,17 +32,13 @@ export async function expressAuthentication(
 		return Promise.reject(Unauthorized);
 	}
 
-	const authUser = ADMIN_USERS.find((user) => user.id === decodedJwtUser.id);
-
-	if (!authUser) {
-		return Promise.reject(Unauthorized);
-	}
-
-	if (scopes?.length) {
-		if (!scopes.includes(authUser.scope)) {
+	try {
+		if (!ObjectId.isValid(decodedJwtUser.id)) {
 			return Promise.reject(Unauthorized);
 		}
+		const parent = await getUserFromId(new ObjectId(decodedJwtUser.id));
+		return Promise.resolve(parent);
+	} catch {
+		return Promise.reject(Unauthorized);
 	}
-
-	return undefined;
 }

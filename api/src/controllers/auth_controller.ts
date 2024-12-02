@@ -1,43 +1,21 @@
-import { Post, Route, Tags, Request, Put, Body, Security, Get, Query } from 'tsoa';
-import express from 'express';
+import { Route, Tags, Post, Body } from 'tsoa';
 
-import { AdminLoginRequest } from '../auth/types';
-import { adminLogin } from '../auth';
-import { processSubmissions } from '../orders/trinity/process_submissions';
-import { getWp } from '../integrations/wordpress';
-import { getPatient } from '../integrations/prescribery/doctalkgo/get_patient';
+import { login } from '../auth';
 
 @Route('auth')
 @Tags('Auth')
 export class AuthController {
-	@Put('/admin-login')
-	public async adminLogin(
-		@Request() req: express.Request,
-		@Body() requestBody: AdminLoginRequest,
-	) {
-		return await adminLogin(req.res, requestBody);
-	}
+	@Post('/login')
+	public async login(@Body() request: { email: string; password: string }) {
+		const SCHOOL_ID = '6724cd433072a8be299591d1';
+		const SCHOOL_PASSWORD = '$choo!';
+		const pamToken = Buffer.from(`${SCHOOL_ID}:${SCHOOL_PASSWORD}`).toString('base64');
 
-	@Post('/test')
-	@Security('jwt')
-	public async test() {
-		return true;
-	}
+		const { user, jwt } = await login(request.email, request.password);
 
-	@Get('/trinity-submissions')
-	@Security('jwt')
-	public async processSubmissions(@Query() preview: boolean = true) {
-		return await processSubmissions(preview);
-	}
-
-	@Get('/demo')
-	@Security('jwt')
-	public async demo(@Query() email: string, @Query() dob: Date) {
-		const wpUser = await getWp(email);
-		const prescribery = await getPatient(email, dob);
 		return {
-			wpUser,
-			prescribery,
+			jwt,
+			pam_token: user.type === 'admin' ? pamToken : undefined,
 		};
 	}
 }

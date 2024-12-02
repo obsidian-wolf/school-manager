@@ -22,6 +22,7 @@
 	},
 	"dependencies": {
 		"@hokify/agenda": "latest",
+		"@ngneat/falso": "^7.2.0",
 		"@types/bcryptjs": "latest",
 		"@types/body-parser": "latest",
 		"@types/cookie-parser": "latest",

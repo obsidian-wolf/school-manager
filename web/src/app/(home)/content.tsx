@@ -1,8 +1,8 @@
 'use client';
-import { useDeleteFile, useEmbedFile, useListFiles, useUploadFile } from '~/api/endpoints';
+import { useDeleteFile, useEmbedFile, useListFiles, useUploadFile } from '~/pam_api/endpoints';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
-import customInstance from '~/api/custom_instance';
+import customInstance from '~/pam_api/custom_instance';
 
 export function HomePageContent() {
     const list = useListFiles();

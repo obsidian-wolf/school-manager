@@ -1,21 +1,21 @@
-import { BASE_URL } from '~/config';
 import Axios, { AxiosRequestConfig } from 'axios';
-
+import { useAuthStore } from '~/auth_store';
+import { API_URL } from '~/config';
+console.log({ API_URL });
 export const AXIOS_INSTANCE = Axios.create({
-    baseURL: BASE_URL,
+    baseURL: API_URL,
     headers: {
         accept: 'application/json',
     },
 });
 
-const SCHOOL_ID = '6724cd433072a8be299591d1';
-const SCHOOL_PASSWORD = '$choo!';
-const API_TOKEN = btoa(`${SCHOOL_ID}:${SCHOOL_PASSWORD}`);
-
 AXIOS_INSTANCE.interceptors.request.use((config) => {
+    const jwt = useAuthStore.getState().auth?.jwt;
     // Add your request interceptors
     // add jwt token
-    config.headers.Authorization = `Basic ${API_TOKEN}`;
+    if (jwt) {
+        config.headers.Authorization = jwt;
+    }
     return config;
 });
 

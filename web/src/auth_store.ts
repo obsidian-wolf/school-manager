@@ -21,3 +21,11 @@ export const useAuthStore = create(
         { name: AUTH_LOCALSTORAGE_KEY },
     ),
 );
+
+export function useLogout() {
+    const authStore = useAuthStore();
+
+    return () => {
+        authStore.setAuth(undefined);
+    };
+}

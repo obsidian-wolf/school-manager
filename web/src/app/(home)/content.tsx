@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import customInstance from '~/pam_api/custom_instance';
 import { FolderArrowDownIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { Link } from 'react-router-dom';
+import { useLogout } from '~/auth_store';
 
 export function HomePageContent() {
     const list = useListFiles();
@@ -14,6 +16,8 @@ export function HomePageContent() {
     const deleteFile = useDeleteFile();
     const [deletingFileId, setDeletingFileId] = useState<string | undefined>();
     const [downloadingFileId, setDownloadingFileId] = useState<string | undefined>();
+
+    const logout = useLogout();
 
     const isLoading = list.isLoading || uploadFile.isPending || embedFile.isPending;
 
@@ -132,9 +136,15 @@ export function HomePageContent() {
 
             <nav className="h-full shadow bg-stone-100">
                 <div className="p-4 text-xl">School Manager</div>
-                <ul className="menu w-56">
+                <ul className="menu w-56 space-y-2">
                     <li>
                         <a className="active">Files</a>
+                    </li>
+                    <li>
+                        <Link to="/chat">Go to chat</Link>
+                    </li>
+                    <li>
+                        <a onClick={() => logout()}>Logout</a>
                     </li>
                 </ul>
             </nav>

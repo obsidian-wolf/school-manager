@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, isAdmin }) =>
     }
 
     if (isAdmin && !auth.pam_token) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/chat" replace />;
     }
 
     return auth ? children : <Navigate to="/login" replace />;

@@ -6,13 +6,12 @@
 	},
 	"scripts": {
 		"install": "cd api && npm i && cd ../web && npm i",
-		"build": "npm run web:build && npm run api:build && npm run web:copy",
+		"build": "npm run web:build && npm run api:build",
 		"local": "concurrently \"cd api && npm run local\" \"cd web && npm run local\"",
 		"start": "cd api && npm start",
 		"worker": "cd api && npm run worker",
 		"web:build": "cd web && npm run build",
-		"api:build": "cd api && npm run build",
-		"web:copy": "node scripts/copy_web"
+		"api:build": "cd api && npm run build"
 	},
 	"dependencies": {
 		"fs-extra": "latest"

@@ -432,6 +432,17 @@
 					"actor"
 				],
 				"type": "object"
+			},
+			"TextBody": {
+				"properties": {
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"text"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {
@@ -1003,7 +1014,16 @@
 						"jwt": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "forceReset",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
 			}
 		},
 		"/message/{chatId}": {
@@ -1068,7 +1088,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"type": "string"
+								"$ref": "#/components/schemas/TextBody"
 							}
 						}
 					}

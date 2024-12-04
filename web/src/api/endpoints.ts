@@ -22,9 +22,11 @@ import type {
     CreateStudent200,
     DeleteStudent200,
     GetChat200,
+    GetChatParams,
     Login200,
     LoginBody,
     SendMessage200,
+    TextBody,
     UpdateParent200,
     UpdateParentRequest,
     UpdateStudent200,
@@ -266,26 +268,29 @@ export const useDeleteStudent = <TError = unknown, TContext = unknown>(options?:
     return useMutation(mutationOptions);
 };
 
-export const getChat = (signal?: AbortSignal) => {
-    return customInstance<GetChat200>({ url: `/message`, method: 'GET', signal });
+export const getChat = (params?: GetChatParams, signal?: AbortSignal) => {
+    return customInstance<GetChat200>({ url: `/message`, method: 'GET', params, signal });
 };
 
-export const getGetChatQueryKey = () => {
-    return [`/message`] as const;
+export const getGetChatQueryKey = (params?: GetChatParams) => {
+    return [`/message`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetChatQueryOptions = <
     TData = Awaited<ReturnType<typeof getChat>>,
     TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>>;
-}) => {
+>(
+    params?: GetChatParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>>;
+    },
+) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getGetChatQueryKey();
+    const queryKey = queryOptions?.queryKey ?? getGetChatQueryKey(params);
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getChat>>> = ({ signal }) =>
-        getChat(signal);
+        getChat(params, signal);
 
     return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
         Awaited<ReturnType<typeof getChat>>,
@@ -297,37 +302,40 @@ export const getGetChatQueryOptions = <
 export type GetChatQueryResult = NonNullable<Awaited<ReturnType<typeof getChat>>>;
 export type GetChatQueryError = unknown;
 
-export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError = unknown>(options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>> &
-        Pick<
-            DefinedInitialDataOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>,
-            'initialData'
-        >;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetChat<
-    TData = Awaited<ReturnType<typeof getChat>>,
-    TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>> &
-        Pick<
-            UndefinedInitialDataOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>,
-            'initialData'
-        >;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useGetChat<
-    TData = Awaited<ReturnType<typeof getChat>>,
-    TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError = unknown>(
+    params: undefined | GetChatParams,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>> &
+            Pick<
+                DefinedInitialDataOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>,
+                'initialData'
+            >;
+    },
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError = unknown>(
+    params?: GetChatParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>> &
+            Pick<
+                UndefinedInitialDataOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>,
+                'initialData'
+            >;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError = unknown>(
+    params?: GetChatParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>>;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-export function useGetChat<
-    TData = Awaited<ReturnType<typeof getChat>>,
-    TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-    const queryOptions = getGetChatQueryOptions(options);
+export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError = unknown>(
+    params?: GetChatParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChat>>, TError, TData>>;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getGetChatQueryOptions(params, options);
 
     const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -336,12 +344,12 @@ export function useGetChat<
     return query;
 }
 
-export const sendMessage = (chatId: string, sendMessageBody: string) => {
+export const sendMessage = (chatId: string, textBody: TextBody) => {
     return customInstance<SendMessage200>({
         url: `/message/${chatId}`,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        data: sendMessageBody,
+        data: textBody,
     });
 };
 
@@ -349,20 +357,20 @@ export const getSendMessageMutationOptions = <TError = unknown, TContext = unkno
     mutation?: UseMutationOptions<
         Awaited<ReturnType<typeof sendMessage>>,
         TError,
-        { chatId: string; data: string },
+        { chatId: string; data: TextBody },
         TContext
     >;
 }): UseMutationOptions<
     Awaited<ReturnType<typeof sendMessage>>,
     TError,
-    { chatId: string; data: string },
+    { chatId: string; data: TextBody },
     TContext
 > => {
     const { mutation: mutationOptions } = options ?? {};
 
     const mutationFn: MutationFunction<
         Awaited<ReturnType<typeof sendMessage>>,
-        { chatId: string; data: string }
+        { chatId: string; data: TextBody }
     > = (props) => {
         const { chatId, data } = props ?? {};
 
@@ -373,20 +381,20 @@ export const getSendMessageMutationOptions = <TError = unknown, TContext = unkno
 };
 
 export type SendMessageMutationResult = NonNullable<Awaited<ReturnType<typeof sendMessage>>>;
-export type SendMessageMutationBody = string;
+export type SendMessageMutationBody = TextBody;
 export type SendMessageMutationError = unknown;
 
 export const useSendMessage = <TError = unknown, TContext = unknown>(options?: {
     mutation?: UseMutationOptions<
         Awaited<ReturnType<typeof sendMessage>>,
         TError,
-        { chatId: string; data: string },
+        { chatId: string; data: TextBody },
         TContext
     >;
 }): UseMutationResult<
     Awaited<ReturnType<typeof sendMessage>>,
     TError,
-    { chatId: string; data: string },
+    { chatId: string; data: TextBody },
     TContext
 > => {
     const mutationOptions = getSendMessageMutationOptions(options);

@@ -96,6 +96,11 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"voiceflowResponses":{"dataType":"array","array":{"dataType":"refAlias","ref":"VoiceflowResponse"}},"is_deleted":{"dataType":"boolean","required":true},"created_at":{"dataType":"datetime","required":true},"parent_text":{"dataType":"string"},"actor":{"ref":"ActorTypes","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TextBody": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"text":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -254,6 +259,7 @@ export function RegisterRoutes(app: Router) {
             async function MessageController_getChat(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    forceReset: {"in":"query","name":"forceReset","dataType":"boolean"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -286,7 +292,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     chatId: {"in":"path","name":"chatId","required":true,"dataType":"string"},
-                    text: {"in":"body","name":"text","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"ref":"TextBody"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -1,6 +1,5 @@
 // TODO move to config.ts
-const VERSION_ID = '66d43121ff6d871c846b1580';
-const AUTH = 'VF.DM.66da082416a91c9f126faa80.H4srexGzO28mpIi4';
+const AUTH = 'VF.DM.672888605b0ae022eae391fa.o3AsgDpSmjBTvMiV';
 
 import axios from 'axios';
 import { StartupVariables, VoiceflowRequest, VoiceflowResponse } from './types';
@@ -11,7 +10,6 @@ export const api = axios.create({
 	headers: {
 		accept: 'application/json',
 		'content-type': 'application/json',
-		versionID: VERSION_ID,
 		Authorization: AUTH,
 	},
 });

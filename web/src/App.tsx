@@ -6,32 +6,30 @@ import ProtectedRoute from './protected_route';
 
 export default function App() {
     return (
-        <div>
-            <Router>
-                <Routes>
-                    <Route path="/login" element={<LoginPage />} />
+        <Router>
+            <Routes>
+                <Route path="/login" element={<LoginPage />} />
 
-                    <Route
-                        path="/chat"
-                        element={
-                            <ProtectedRoute>
-                                <ChatPageContent />
-                            </ProtectedRoute>
-                        }
-                    />
+                <Route
+                    path="/chat"
+                    element={
+                        <ProtectedRoute>
+                            <ChatPageContent />
+                        </ProtectedRoute>
+                    }
+                />
 
-                    <Route
-                        path="/"
-                        element={
-                            <ProtectedRoute isAdmin>
-                                <Routes>
-                                    <Route path="/" element={<HomePageContent />} />
-                                </Routes>
-                            </ProtectedRoute>
-                        }
-                    />
-                </Routes>
-            </Router>
-        </div>
+                <Route
+                    path="/"
+                    element={
+                        <ProtectedRoute isAdmin>
+                            <Routes>
+                                <Route path="/" element={<HomePageContent />} />
+                            </Routes>
+                        </ProtectedRoute>
+                    }
+                />
+            </Routes>
+        </Router>
     );
 }

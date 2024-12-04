@@ -16,20 +16,22 @@ export function parseChat(chat: WithId<Chat>) {
 	};
 }
 
-export async function getChat(user: WithId<User>) {
-	const chat = await chatCollection.findOne(
-		{
-			user_id: user._id,
-		},
-		{
-			sort: {
-				created_at: -1,
+export async function getChat(user: WithId<User>, forceReset = false) {
+	if (!forceReset) {
+		const chat = await chatCollection.findOne(
+			{
+				user_id: user._id,
 			},
-		},
-	);
+			{
+				sort: {
+					created_at: -1,
+				},
+			},
+		);
 
-	if (chat) {
-		return parseChat(chat);
+		if (chat) {
+			return parseChat(chat);
+		}
 	}
 
 	const newChatId = await chatCollection.insertOne({
@@ -117,7 +119,6 @@ export async function sendMessage(parent: WithId<User>, chatId: ObjectId, text: 
 						{
 							actor: ActorTypes.ASSISTANT,
 							created_at: new Date(),
-							parent_text: text,
 							is_deleted: false,
 							voiceflowResponses: vfResponses,
 						},

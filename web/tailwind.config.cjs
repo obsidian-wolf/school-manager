@@ -7,6 +7,9 @@ const config = {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svg}'],
     theme: {},
     plugins: [typography, daisyui],
+    daisyui: {
+        themes: ['light'],
+    },
 };
 
 /** @type {import("tailwindcss").Config} */

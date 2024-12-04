@@ -3,6 +3,7 @@ import { useDeleteFile, useEmbedFile, useListFiles, useUploadFile } from '~/pam_
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import customInstance from '~/pam_api/custom_instance';
+import { FolderArrowDownIcon, TrashIcon } from '@heroicons/react/24/solid';
 
 export function HomePageContent() {
     const list = useListFiles();
@@ -26,7 +27,8 @@ export function HomePageContent() {
         }
     }
 
-    async function onUploadFile() {
+    async function onUploadFile(e: React.MouseEvent<HTMLButtonElement>) {
+        e.stopPropagation();
         if (!file) return;
         await uploadFile.mutateAsync(
             {
@@ -35,10 +37,11 @@ export function HomePageContent() {
                 },
             },
             {
-                onSuccess: async (id) => {
-                    await embedFile.mutateAsync({ id });
+                onSuccess: async () => {
+                    // await embedFile.mutateAsync({ id });
                     fileUploadRef.current!.value = '';
                     setFile(undefined);
+                    dialogRef.current?.close();
 
                     list.refetch();
                 },
@@ -76,50 +79,104 @@ export function HomePageContent() {
         setDownloadingFileId(undefined);
     }
 
-    return (
-        <div>
-            <div className="navbar bg-base-100">
-                <a className="btn btn-ghost text-xl">School Manager</a>
-            </div>
+    const dialogRef = useRef<HTMLDialogElement>(null);
 
-            <div className="container mx-auto px-4">
+    return (
+        <div className="flex h-screen">
+            <dialog ref={dialogRef} className="modal">
+                <div className="modal-box">
+                    <form
+                        method="dialog"
+                        onSubmit={() => {
+                            fileUploadRef.current!.value = '';
+                            setFile(undefined);
+                        }}
+                    >
+                        {/* if there is a button in form, it will close the modal */}
+                        <button
+                            type="submit"
+                            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                        >
+                            ✕
+                        </button>
+                    </form>
+                    <h3 className="font-bold text-lg">Upload New File</h3>
+                    <div className="space-x-4 flex pt-8">
+                        <input
+                            disabled={isLoading}
+                            onChange={(e) => {
+                                // embed file
+                                const file = e.target.files?.[0];
+                                setFile(file);
+                            }}
+                            ref={fileUploadRef}
+                            type="file"
+                            className="file-input max-w-full w-full file-input-ghost"
+                        />
+                    </div>
+                    <div className="modal-action space-x-4">
+                        <form method="dialog">
+                            <button
+                                type="button"
+                                className="btn btn-neutral btn-outline"
+                                disabled={!file || isLoading}
+                                onClick={onUploadFile}
+                            >
+                                Upload
+                                {isLoading && <span className="loading loading-spinner"></span>}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+
+            <nav className="h-full shadow bg-stone-100">
+                <div className="p-4 text-xl">School Manager</div>
+                <ul className="menu w-56">
+                    <li>
+                        <a className="active">Files</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <main className="flex-1 p-4">
                 {!list.data ? (
                     <div className="loading loading-spinner" />
                 ) : (
                     <table className="table">
                         <thead>
                             <tr>
-                                <th>File Name</th>
-                                <th>Size</th>
+                                <th>Name</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {list.data.map((file) => (
                                 <tr key={file.id}>
-                                    <td>{file.id}</td>
                                     <td>{file.file_name}</td>
                                     <td className="space-x-2">
                                         <button
                                             type="button"
-                                            className={clsx(`btn btn-primary btn-sm`)}
+                                            className={clsx(`btn btn-outline btn-sm w-10"`)}
                                             disabled={downloadingFileId === file.id}
                                             onClick={() => onDownloadFile(file.id, file.file_name)}
                                         >
-                                            Download
-                                            {file.id === downloadingFileId && (
+                                            {file.id === downloadingFileId ? (
                                                 <span className="loading loading-spinner"></span>
+                                            ) : (
+                                                <FolderArrowDownIcon className="h-4" />
                                             )}
                                         </button>
                                         <button
                                             type="button"
-                                            className="btn btn-error btn-sm"
+                                            className="btn btn-outline btn-error btn-sm w-10"
                                             disabled={deletingFileId === file.id}
                                             onClick={() => onFileDelete(file.id)}
                                         >
-                                            Delete
-                                            {file.id === deletingFileId && (
+                                            {file.id === deletingFileId ? (
                                                 <span className="loading loading-spinner"></span>
+                                            ) : (
+                                                <TrashIcon className="h-4" />
                                             )}
                                         </button>
                                     </td>
@@ -129,29 +186,14 @@ export function HomePageContent() {
                     </table>
                 )}
                 <div className="divider"></div>
-                <div className="space-x-4">
-                    <input
-                        disabled={isLoading}
-                        onChange={(e) => {
-                            // embed file
-                            const file = e.target.files?.[0];
-                            setFile(file);
-                        }}
-                        ref={fileUploadRef}
-                        type="file"
-                        className="file-input w-full max-w-xs"
-                    />
-                    <button
-                        type="button"
-                        className="btn btn-primary btn-sm"
-                        disabled={!file || isLoading}
-                        onClick={onUploadFile}
-                    >
-                        Upload
-                        {isLoading && <span className="loading loading-spinner"></span>}
-                    </button>
-                </div>
-            </div>
+                <button
+                    className="btn btn-outline"
+                    type="button"
+                    onClick={() => dialogRef.current?.showModal()}
+                >
+                    Upload New File
+                </button>
+            </main>
         </div>
     );
 }

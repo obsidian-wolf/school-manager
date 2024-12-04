@@ -11,8 +11,6 @@
 		"lint:fix": "eslint src/ --ext .ts,.js --fix",
 		"db:local": "cross-env-shell \"./runlocaldb.sh\"",
 		"db:test": "cross-env-shell \"./runtestdb.sh\"",
-		"worker:local": "dotenv -e .env.local -- nodemon --exec \"npx ts-node src/worker.ts\"",
-		"worker": "node build/worker.js",
 		"start": "node build/index.js",
 		"start:watch": "nodemon --exec \"npx ts-node src/index.ts\"",
 		"routes:gen:watch": "nodemon -x \"npm run routes:gen\"",

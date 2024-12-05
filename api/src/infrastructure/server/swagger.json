@@ -433,7 +433,36 @@
 				],
 				"type": "object"
 			},
-			"TextBody": {
+			"TextRequest": {
+				"properties": {
+					"payload": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"text"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"payload",
+					"type"
+				],
+				"type": "object"
+			},
+			"SendMessageRequest": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/ChoiceRequest"
+					},
+					{
+						"$ref": "#/components/schemas/TextRequest"
+					}
+				]
+			},
+			"SaveSummary": {
 				"properties": {
 					"text": {
 						"type": "string"
@@ -441,6 +470,54 @@
 				},
 				"required": [
 					"text"
+				],
+				"type": "object"
+			},
+			"Pick_Embedding.Exclude_keyofEmbedding._id__": {
+				"properties": {
+					"user_id": {
+						"$ref": "#/components/schemas/ObjectId"
+					},
+					"pam_id": {
+						"type": "string"
+					},
+					"summary": {
+						"type": "string"
+					},
+					"is_pending": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"user_id",
+					"pam_id"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_Embedding._id_": {
+				"$ref": "#/components/schemas/Pick_Embedding.Exclude_keyofEmbedding._id__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"WebEmbedding": {
+				"$ref": "#/components/schemas/Omit_Embedding._id_"
+			},
+			"SetEmbeddedStatus": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"embedded"
+						],
+						"nullable": false
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status",
+					"id"
 				],
 				"type": "object"
 			}
@@ -1088,7 +1165,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/TextBody"
+								"$ref": "#/components/schemas/SendMessageRequest"
 							}
 						}
 					}
@@ -1132,6 +1209,158 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/embedding-metadata/{id}/summary": {
+			"post": {
+				"operationId": "SaveSummary",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"EmbeddingMetadata"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SaveSummary"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/embedding-metadata": {
+			"get": {
+				"operationId": "GetEmbeddingMetadata",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/WebEmbedding"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"EmbeddingMetadata"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "EmbeddingWebhook",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"EmbeddingMetadata"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetEmbeddedStatus"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/embedding-metadata/{id}": {
+			"post": {
+				"operationId": "CreateEmbeddingMetadata",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"EmbeddingMetadata"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isPending",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteEmbeddingMetadata",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"EmbeddingMetadata"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/auth/login": {

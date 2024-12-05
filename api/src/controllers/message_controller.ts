@@ -2,11 +2,7 @@ import { Route, Tags, Path, Get, Post, Body, Request, Security, Query } from 'ts
 
 import { AuthedRequest } from '../infrastructure/server/middlewares/authentication_middleware';
 import { ObjectId } from 'mongodb';
-import { getChat, sendMessage } from '../services/chats';
-
-type TextBody = {
-	text: string;
-};
+import { getChat, sendMessage, SendMessageRequest } from '../services/chats';
 
 @Route('message')
 @Tags('Message')
@@ -22,8 +18,8 @@ export class MessageController {
 	public async sendMessage(
 		@Request() request: AuthedRequest,
 		@Path() chatId: string,
-		@Body() body: TextBody,
+		@Body() body: SendMessageRequest,
 	) {
-		return await sendMessage(request.user, new ObjectId(chatId), body.text);
+		return await sendMessage(request.user, new ObjectId(chatId), body);
 	}
 }

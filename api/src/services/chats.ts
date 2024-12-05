@@ -4,6 +4,7 @@ import db from '../infrastructure/db';
 import { User } from '../types/parent';
 import { ActorTypes, Chat, Message } from '../types/chat';
 import { vfInteract } from '../integrations/voiceflow/api';
+import { ChoiceRequest, TextRequest } from '../integrations/voiceflow/types';
 
 const chatCollection = db.collection<Chat>('chat');
 
@@ -52,6 +53,7 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 			type: 'launch',
 		},
 		{
+			debug_ind: 1,
 			parent: {
 				id: user._id.toString(),
 				name: user.name,
@@ -85,7 +87,13 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 	return parseChat(updatedChat!);
 }
 
-export async function sendMessage(parent: WithId<User>, chatId: ObjectId, text: string) {
+export type SendMessageRequest = ChoiceRequest | TextRequest;
+
+export async function sendMessage(
+	parent: WithId<User>,
+	chatId: ObjectId,
+	request: SendMessageRequest,
+) {
 	const chat = await chatCollection.findOne({
 		_id: chatId,
 		user_id: parent._id,
@@ -95,17 +103,21 @@ export async function sendMessage(parent: WithId<User>, chatId: ObjectId, text: 
 		throw new BadRequest('Chat not found');
 	}
 
+	const parentText = (() => {
+		if (typeof request.payload === 'string') {
+			return request.payload;
+		}
+		return request.payload.label;
+	})();
+
 	const parentMessage: Message = {
 		actor: ActorTypes.USER,
 		created_at: new Date(),
 		is_deleted: false,
-		parent_text: text,
+		parent_text: parentText,
 	};
 
-	const vfResponses = await vfInteract(chatId.toString(), {
-		type: 'text',
-		payload: text,
-	});
+	const vfResponses = await vfInteract(chatId.toString(), request);
 
 	const updatedChat = await chatCollection.findOneAndUpdate(
 		{

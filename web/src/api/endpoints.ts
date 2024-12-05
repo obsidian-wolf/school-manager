@@ -19,14 +19,18 @@ import type {
 } from '@tanstack/react-query';
 import type {
     ClassHeartbeat200,
+    CreateEmbeddingMetadataParams,
     CreateStudent200,
     DeleteStudent200,
     GetChat200,
     GetChatParams,
     Login200,
     LoginBody,
+    PickEmbeddingExcludeKeyofEmbeddingId,
+    SaveSummary,
     SendMessage200,
-    TextBody,
+    SendMessageRequest,
+    SetEmbeddedStatus,
     UpdateParent200,
     UpdateParentRequest,
     UpdateStudent200,
@@ -344,12 +348,12 @@ export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError =
     return query;
 }
 
-export const sendMessage = (chatId: string, textBody: TextBody) => {
+export const sendMessage = (chatId: string, sendMessageRequest: SendMessageRequest) => {
     return customInstance<SendMessage200>({
         url: `/message/${chatId}`,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        data: textBody,
+        data: sendMessageRequest,
     });
 };
 
@@ -357,20 +361,20 @@ export const getSendMessageMutationOptions = <TError = unknown, TContext = unkno
     mutation?: UseMutationOptions<
         Awaited<ReturnType<typeof sendMessage>>,
         TError,
-        { chatId: string; data: TextBody },
+        { chatId: string; data: SendMessageRequest },
         TContext
     >;
 }): UseMutationOptions<
     Awaited<ReturnType<typeof sendMessage>>,
     TError,
-    { chatId: string; data: TextBody },
+    { chatId: string; data: SendMessageRequest },
     TContext
 > => {
     const { mutation: mutationOptions } = options ?? {};
 
     const mutationFn: MutationFunction<
         Awaited<ReturnType<typeof sendMessage>>,
-        { chatId: string; data: TextBody }
+        { chatId: string; data: SendMessageRequest }
     > = (props) => {
         const { chatId, data } = props ?? {};
 
@@ -381,20 +385,20 @@ export const getSendMessageMutationOptions = <TError = unknown, TContext = unkno
 };
 
 export type SendMessageMutationResult = NonNullable<Awaited<ReturnType<typeof sendMessage>>>;
-export type SendMessageMutationBody = TextBody;
+export type SendMessageMutationBody = SendMessageRequest;
 export type SendMessageMutationError = unknown;
 
 export const useSendMessage = <TError = unknown, TContext = unknown>(options?: {
     mutation?: UseMutationOptions<
         Awaited<ReturnType<typeof sendMessage>>,
         TError,
-        { chatId: string; data: TextBody },
+        { chatId: string; data: SendMessageRequest },
         TContext
     >;
 }): UseMutationResult<
     Awaited<ReturnType<typeof sendMessage>>,
     TError,
-    { chatId: string; data: TextBody },
+    { chatId: string; data: SendMessageRequest },
     TContext
 > => {
     const mutationOptions = getSendMessageMutationOptions(options);
@@ -477,6 +481,337 @@ export function useClassHeartbeat<
 
     return query;
 }
+
+export const saveSummary = (id: string, saveSummary: SaveSummary) => {
+    return customInstance<void>({
+        url: `/embedding-metadata/${id}/summary`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: saveSummary,
+    });
+};
+
+export const getSaveSummaryMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof saveSummary>>,
+        TError,
+        { id: string; data: SaveSummary },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof saveSummary>>,
+    TError,
+    { id: string; data: SaveSummary },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof saveSummary>>,
+        { id: string; data: SaveSummary }
+    > = (props) => {
+        const { id, data } = props ?? {};
+
+        return saveSummary(id, data);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type SaveSummaryMutationResult = NonNullable<Awaited<ReturnType<typeof saveSummary>>>;
+export type SaveSummaryMutationBody = SaveSummary;
+export type SaveSummaryMutationError = unknown;
+
+export const useSaveSummary = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof saveSummary>>,
+        TError,
+        { id: string; data: SaveSummary },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof saveSummary>>,
+    TError,
+    { id: string; data: SaveSummary },
+    TContext
+> => {
+    const mutationOptions = getSaveSummaryMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+export const getEmbeddingMetadata = (signal?: AbortSignal) => {
+    return customInstance<PickEmbeddingExcludeKeyofEmbeddingId[]>({
+        url: `/embedding-metadata`,
+        method: 'GET',
+        signal,
+    });
+};
+
+export const getGetEmbeddingMetadataQueryKey = () => {
+    return [`/embedding-metadata`] as const;
+};
+
+export const getGetEmbeddingMetadataQueryOptions = <
+    TData = Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<
+        UseQueryOptions<Awaited<ReturnType<typeof getEmbeddingMetadata>>, TError, TData>
+    >;
+}) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetEmbeddingMetadataQueryKey();
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEmbeddingMetadata>>> = ({ signal }) =>
+        getEmbeddingMetadata(signal);
+
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+        TError,
+        TData
+    > & { queryKey: QueryKey };
+};
+
+export type GetEmbeddingMetadataQueryResult = NonNullable<
+    Awaited<ReturnType<typeof getEmbeddingMetadata>>
+>;
+export type GetEmbeddingMetadataQueryError = unknown;
+
+export function useGetEmbeddingMetadata<
+    TData = Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+    TError = unknown,
+>(options: {
+    query: Partial<
+        UseQueryOptions<Awaited<ReturnType<typeof getEmbeddingMetadata>>, TError, TData>
+    > &
+        Pick<
+            DefinedInitialDataOptions<
+                Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+                TError,
+                TData
+            >,
+            'initialData'
+        >;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetEmbeddingMetadata<
+    TData = Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<
+        UseQueryOptions<Awaited<ReturnType<typeof getEmbeddingMetadata>>, TError, TData>
+    > &
+        Pick<
+            UndefinedInitialDataOptions<
+                Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+                TError,
+                TData
+            >,
+            'initialData'
+        >;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetEmbeddingMetadata<
+    TData = Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<
+        UseQueryOptions<Awaited<ReturnType<typeof getEmbeddingMetadata>>, TError, TData>
+    >;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useGetEmbeddingMetadata<
+    TData = Awaited<ReturnType<typeof getEmbeddingMetadata>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<
+        UseQueryOptions<Awaited<ReturnType<typeof getEmbeddingMetadata>>, TError, TData>
+    >;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getGetEmbeddingMetadataQueryOptions(options);
+
+    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+export const embeddingWebhook = (setEmbeddedStatus: SetEmbeddedStatus) => {
+    return customInstance<void>({
+        url: `/embedding-metadata`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: setEmbeddedStatus,
+    });
+};
+
+export const getEmbeddingWebhookMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof embeddingWebhook>>,
+        TError,
+        { data: SetEmbeddedStatus },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof embeddingWebhook>>,
+    TError,
+    { data: SetEmbeddedStatus },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof embeddingWebhook>>,
+        { data: SetEmbeddedStatus }
+    > = (props) => {
+        const { data } = props ?? {};
+
+        return embeddingWebhook(data);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type EmbeddingWebhookMutationResult = NonNullable<
+    Awaited<ReturnType<typeof embeddingWebhook>>
+>;
+export type EmbeddingWebhookMutationBody = SetEmbeddedStatus;
+export type EmbeddingWebhookMutationError = unknown;
+
+export const useEmbeddingWebhook = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof embeddingWebhook>>,
+        TError,
+        { data: SetEmbeddedStatus },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof embeddingWebhook>>,
+    TError,
+    { data: SetEmbeddedStatus },
+    TContext
+> => {
+    const mutationOptions = getEmbeddingWebhookMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+export const createEmbeddingMetadata = (id: string, params?: CreateEmbeddingMetadataParams) => {
+    return customInstance<void>({ url: `/embedding-metadata/${id}`, method: 'POST', params });
+};
+
+export const getCreateEmbeddingMetadataMutationOptions = <
+    TError = unknown,
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof createEmbeddingMetadata>>,
+        TError,
+        { id: string; params?: CreateEmbeddingMetadataParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof createEmbeddingMetadata>>,
+    TError,
+    { id: string; params?: CreateEmbeddingMetadataParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof createEmbeddingMetadata>>,
+        { id: string; params?: CreateEmbeddingMetadataParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return createEmbeddingMetadata(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type CreateEmbeddingMetadataMutationResult = NonNullable<
+    Awaited<ReturnType<typeof createEmbeddingMetadata>>
+>;
+
+export type CreateEmbeddingMetadataMutationError = unknown;
+
+export const useCreateEmbeddingMetadata = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof createEmbeddingMetadata>>,
+        TError,
+        { id: string; params?: CreateEmbeddingMetadataParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof createEmbeddingMetadata>>,
+    TError,
+    { id: string; params?: CreateEmbeddingMetadataParams },
+    TContext
+> => {
+    const mutationOptions = getCreateEmbeddingMetadataMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+export const deleteEmbeddingMetadata = (id: string) => {
+    return customInstance<void>({ url: `/embedding-metadata/${id}`, method: 'DELETE' });
+};
+
+export const getDeleteEmbeddingMetadataMutationOptions = <
+    TError = unknown,
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof deleteEmbeddingMetadata>>,
+        TError,
+        { id: string },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof deleteEmbeddingMetadata>>,
+    TError,
+    { id: string },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof deleteEmbeddingMetadata>>,
+        { id: string }
+    > = (props) => {
+        const { id } = props ?? {};
+
+        return deleteEmbeddingMetadata(id);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteEmbeddingMetadataMutationResult = NonNullable<
+    Awaited<ReturnType<typeof deleteEmbeddingMetadata>>
+>;
+
+export type DeleteEmbeddingMetadataMutationError = unknown;
+
+export const useDeleteEmbeddingMetadata = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof deleteEmbeddingMetadata>>,
+        TError,
+        { id: string },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof deleteEmbeddingMetadata>>,
+    TError,
+    { id: string },
+    TContext
+> => {
+    const mutationOptions = getDeleteEmbeddingMetadataMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
 
 export const login = (loginBody: LoginBody) => {
     return customInstance<Login200>({

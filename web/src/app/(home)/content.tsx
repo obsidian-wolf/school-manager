@@ -1,11 +1,28 @@
 'use client';
-import { useDeleteFile, useEmbedFile, useListFiles, useUploadFile } from '~/pam_api/endpoints';
+import {
+    summarize,
+    useDeleteFile,
+    useEmbedFile,
+    useListFiles,
+    useUploadFile,
+} from '~/pam_api/endpoints';
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import customInstance from '~/pam_api/custom_instance';
-import { FolderArrowDownIcon, TrashIcon } from '@heroicons/react/24/solid';
+import {
+    CheckBadgeIcon,
+    DocumentTextIcon,
+    FolderArrowDownIcon,
+    TrashIcon,
+} from '@heroicons/react/24/solid';
 import { Link } from 'react-router-dom';
 import { useLogout } from '~/auth_store';
+import {
+    createEmbeddingMetadata,
+    deleteEmbeddingMetadata,
+    saveSummary,
+    useGetEmbeddingMetadata,
+} from '~/api/endpoints';
 
 export function HomePageContent() {
     const list = useListFiles();
@@ -16,6 +33,11 @@ export function HomePageContent() {
     const deleteFile = useDeleteFile();
     const [deletingFileId, setDeletingFileId] = useState<string | undefined>();
     const [downloadingFileId, setDownloadingFileId] = useState<string | undefined>();
+    const { data: embeddings, refetch: refetchEmbeddings } = useGetEmbeddingMetadata({
+        query: {
+            refetchInterval: 5000,
+        },
+    });
 
     const logout = useLogout();
 
@@ -25,11 +47,46 @@ export function HomePageContent() {
         try {
             setDeletingFileId(id);
             await deleteFile.mutateAsync({ id });
+            try {
+                await deleteEmbeddingMetadata(id);
+            } catch {
+                //
+            }
             list.refetch();
+            refetchEmbeddings();
         } finally {
             setDeletingFileId(undefined);
         }
     }
+
+    useEffect(() => {
+        (async () => {
+            if (!list.data || !embeddings) return;
+
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            await Promise.all(
+                list.data.map(async (file) => {
+                    const embedding = embeddings?.find((e) => e.pam_id === file.id);
+
+                    if (!embedding) {
+                        await createEmbeddingMetadata(file.id, {
+                            isPending: false,
+                        });
+                    }
+
+                    if (!embedding?.summary) {
+                        await refetchEmbeddings();
+
+                        const summary = await summarize(file.id);
+
+                        await saveSummary(file.id, { text: summary });
+                    }
+                }),
+            );
+        })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [!!list.data && !!embeddings]);
 
     async function onUploadFile(e: React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
@@ -39,15 +96,26 @@ export function HomePageContent() {
                 data: {
                     file,
                 },
+                params: {
+                    callbackUrl: 'https://c4e16aa954e9.ngrok.app/embedding-metadata',
+                },
             },
             {
-                onSuccess: async () => {
-                    // await embedFile.mutateAsync({ id });
+                onSuccess: async (id) => {
                     fileUploadRef.current!.value = '';
                     setFile(undefined);
                     dialogRef.current?.close();
 
                     list.refetch();
+
+                    (async () => {
+                        await createEmbeddingMetadata(id);
+                        await refetchEmbeddings();
+
+                        const summary = await summarize(id);
+
+                        await saveSummary(id, { text: summary });
+                    })();
                 },
             },
         );
@@ -84,6 +152,8 @@ export function HomePageContent() {
     }
 
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const summaryRef = useRef<HTMLDialogElement>(null);
+    const [summary, setSummary] = useState<string | undefined>(undefined);
 
     return (
         <div className="flex h-screen">
@@ -134,6 +204,27 @@ export function HomePageContent() {
                 </div>
             </dialog>
 
+            <dialog ref={summaryRef} className="modal">
+                <div className="modal-box">
+                    <form
+                        method="dialog"
+                        onSubmit={() => {
+                            setSummary(undefined);
+                        }}
+                    >
+                        {/* if there is a button in form, it will close the modal */}
+                        <button
+                            type="submit"
+                            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                        >
+                            ✕
+                        </button>
+                    </form>
+                    <h3 className="font-bold text-lg">Summary</h3>
+                    <div className="space-x-4 flex pt-4">{summary}</div>
+                </div>
+            </dialog>
+
             <nav className="h-full shadow bg-stone-100">
                 <div className="p-4 text-xl">School Manager</div>
                 <ul className="menu w-56 space-y-2">
@@ -157,41 +248,66 @@ export function HomePageContent() {
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {list.data.map((file) => (
-                                <tr key={file.id}>
-                                    <td>{file.file_name}</td>
-                                    <td className="space-x-2">
-                                        <button
-                                            type="button"
-                                            className={clsx(`btn btn-outline btn-sm w-10"`)}
-                                            disabled={downloadingFileId === file.id}
-                                            onClick={() => onDownloadFile(file.id, file.file_name)}
-                                        >
-                                            {file.id === downloadingFileId ? (
-                                                <span className="loading loading-spinner"></span>
+                            {list.data.map((file) => {
+                                const embedding = embeddings?.find((e) => e.pam_id === file.id);
+
+                                return (
+                                    <tr key={file.id}>
+                                        <td>{file.file_name}</td>
+                                        <td>
+                                            {embedding?.is_pending ? (
+                                                <span className="loading loading-dots loading-md"></span>
                                             ) : (
-                                                <FolderArrowDownIcon className="h-4" />
+                                                <CheckBadgeIcon className="h-6" />
                                             )}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline btn-error btn-sm w-10"
-                                            disabled={deletingFileId === file.id}
-                                            onClick={() => onFileDelete(file.id)}
-                                        >
-                                            {file.id === deletingFileId ? (
-                                                <span className="loading loading-spinner"></span>
-                                            ) : (
-                                                <TrashIcon className="h-4" />
-                                            )}
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        <td className="space-x-2">
+                                            <button
+                                                type="button"
+                                                className={clsx(`btn btn-outline btn-sm w-10"`)}
+                                                disabled={downloadingFileId === file.id}
+                                                onClick={() =>
+                                                    onDownloadFile(file.id, file.file_name)
+                                                }
+                                            >
+                                                {file.id === downloadingFileId ? (
+                                                    <span className="loading loading-spinner"></span>
+                                                ) : (
+                                                    <FolderArrowDownIcon className="h-4" />
+                                                )}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline btn-error btn-sm w-10"
+                                                disabled={deletingFileId === file.id}
+                                                onClick={() => onFileDelete(file.id)}
+                                            >
+                                                {file.id === deletingFileId ? (
+                                                    <span className="loading loading-spinner"></span>
+                                                ) : (
+                                                    <TrashIcon className="h-4" />
+                                                )}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline btn-success btn-sm w-10"
+                                                disabled={!embedding?.summary}
+                                                onClick={() => {
+                                                    setSummary(embedding?.summary);
+                                                    summaryRef.current?.showModal();
+                                                }}
+                                            >
+                                                <DocumentTextIcon className="h-4" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 )}

@@ -4,6 +4,7 @@ import { User, Student } from '../../types/parent';
  * Startup variables
  */
 export type StartupVariables = {
+	debug_ind?: number;
 	parent: Omit<User, 'students' | 'password' | 'type'> & { id: string };
 	students: Student[];
 };
@@ -37,10 +38,6 @@ export type ChoiceRequest =
 	| {
 			type: 'intent';
 			payload: IntentPayload;
-	  }
-	| {
-			type: string;
-			payload: PathPayload;
 	  }
 	| {
 			type: string;

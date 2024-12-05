@@ -1,9 +1,9 @@
 'use client';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import Markdown from 'react-markdown';
 import { getChat, useSendMessage } from '~/api/endpoints';
-import { GetChat200 } from '~/api/model';
+import { ChoiceRequest, GetChat200, Message, VoiceflowResponse } from '~/api/model';
 import { ActorTypes } from '~/pam_api/model';
 import { Bars4Icon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
@@ -47,15 +47,85 @@ export function ChatPageContent() {
         const r = await sendMessage({
             chatId: chat.id,
             data: {
-                text: message,
+                type: 'text',
+                payload: message,
             },
         });
         setChat(r);
     }
 
-    const viewMessages = chat?.messages.filter(
+    const submitChoice = useCallback(
+        async (request: ChoiceRequest) => {
+            if (!chat) return;
+
+            setChat({
+                ...chat,
+                messages: [
+                    ...chat.messages,
+                    {
+                        actor: ActorTypes.User,
+                        created_at: new Date().toISOString(),
+                        is_deleted: false,
+                        parent_text: request.payload.label,
+                    },
+                ],
+            });
+
+            if (!request.payload.actions) {
+                request.payload.actions = [];
+            }
+
+            setMessage('');
+
+            const r = await sendMessage({
+                chatId: chat.id,
+                data: request,
+            });
+            setChat(r);
+        },
+        [chat, sendMessage],
+    );
+
+    let viewMessages = chat?.messages.filter(
         (message) =>
-            message.parent_text || message.voiceflowResponses?.find((v) => v.type === 'text'),
+            message.parent_text ||
+            message.voiceflowResponses?.find((v) => v.type === 'text' || v.type === 'choice'),
+    );
+
+    // reverse the messages so that the latest message is at the bottom
+    viewMessages = viewMessages?.reverse();
+
+    const renderVoiceflowResponse = useCallback(
+        (message: Message, v: VoiceflowResponse, showButtons: boolean) => {
+            if (v.type === 'text') {
+                return (
+                    <div className="rounded inline-flex flex-col mr-auto py-1 px-2 shadow-lg bg-white">
+                        <Markdown>{v.payload.message}</Markdown>
+                        <div className="ml-auto pl-4 text-[11px] text-neutral-500 whitespace-nowrap">
+                            {new Date(message.created_at).toLocaleString()}
+                        </div>
+                    </div>
+                );
+            }
+            if (v.type === 'choice' && showButtons) {
+                return (
+                    <div className="flex gap-2 pt-1">
+                        {v.payload.buttons.map((b) => (
+                            <button
+                                type="button"
+                                onClick={() => submitChoice(b.request)}
+                                className="btn btn-outline"
+                                key={b.request.type}
+                            >
+                                {b.name}
+                            </button>
+                        ))}
+                    </div>
+                );
+            }
+            return null;
+        },
+        [submitChoice],
     );
 
     return (
@@ -73,11 +143,11 @@ export function ChatPageContent() {
                     </li>
                 </ul>
             </div>
-            <div className="container h-full mx-auto px-4 py-6 flex flex-col">
-                <div className="flex-1 overflow-auto space-y-4">
+            <div className="container h-full mx-auto px-4 pb-6 pt-2 flex flex-col">
+                <div className="flex-1 overflow-auto flex flex-col-reverse scroll-smooth gap-y-4 py-4 transition">
                     {viewMessages?.length ? (
                         viewMessages.map((message, index) => (
-                            <div key={index} className={clsx('flex flex-col')}>
+                            <div key={index} className={clsx('flex flex-col-reverse')}>
                                 {message.parent_text ? (
                                     <div className="rounded inline-flex flex-col py-1 px-2 shadow-lg bg-green-100 ml-auto">
                                         <div className="">{message.parent_text}</div>
@@ -87,21 +157,11 @@ export function ChatPageContent() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-2">
-                                        {message.voiceflowResponses
-                                            ?.filter((v) => v.type === 'text')
-                                            .map((v, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="rounded inline-flex flex-col mr-auto py-1 px-2 shadow-lg bg-white"
-                                                >
-                                                    <Markdown>{v.payload.message}</Markdown>
-                                                    <div className="ml-auto pl-4 text-[11px] text-neutral-500 whitespace-nowrap">
-                                                        {new Date(
-                                                            message.created_at,
-                                                        ).toLocaleString()}
-                                                    </div>
-                                                </div>
-                                            ))}
+                                        {message.voiceflowResponses?.map((v, i) => (
+                                            <Fragment key={i}>
+                                                {renderVoiceflowResponse(message, v, index === 0)}
+                                            </Fragment>
+                                        ))}
                                     </div>
                                 )}
                             </div>
@@ -110,7 +170,7 @@ export function ChatPageContent() {
                         <div className="loading loading-spinner"></div>
                     )}
                 </div>
-                <form className="flex space-x-4 w-full pt-4" onSubmit={handleFormSubmit}>
+                <form className="flex space-x-4 w-full pt-1" onSubmit={handleFormSubmit}>
                     <input
                         type="text"
                         placeholder="Type here"

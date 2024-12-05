@@ -10,6 +10,8 @@ import { MessageController } from './../../controllers/message_controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { HeartbeatController } from './../../controllers/heartbeat_controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EmbeddingMetadataController } from './../../controllers/embedding_metadata_controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../../controllers/auth_controller';
 import { expressAuthentication } from './middlewares/authentication_middleware';
 // @ts-ignore - no great way to install types from subpackage
@@ -63,7 +65,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ChoiceRequest": {
         "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"ref":"IntentPayload","required":true},"type":{"dataType":"enum","enums":["intent"],"required":true}}},{"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"ref":"PathPayload","required":true},"type":{"dataType":"string","required":true}}},{"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"ref":"PathPayload","required":true},"type":{"dataType":"string","required":true}}}],"validators":{}},
+        "type": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"ref":"IntentPayload","required":true},"type":{"dataType":"enum","enums":["intent"],"required":true}}},{"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"ref":"PathPayload","required":true},"type":{"dataType":"string","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ChoiceResponse": {
@@ -96,9 +98,39 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"voiceflowResponses":{"dataType":"array","array":{"dataType":"refAlias","ref":"VoiceflowResponse"}},"is_deleted":{"dataType":"boolean","required":true},"created_at":{"dataType":"datetime","required":true},"parent_text":{"dataType":"string"},"actor":{"ref":"ActorTypes","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TextBody": {
+    "TextRequest": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"dataType":"string","required":true},"type":{"dataType":"enum","enums":["text"],"required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SendMessageRequest": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"ref":"ChoiceRequest"},{"ref":"TextRequest"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SaveSummary": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"text":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_Embedding.Exclude_keyofEmbedding._id__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"user_id":{"ref":"ObjectId","required":true},"pam_id":{"dataType":"string","required":true},"summary":{"dataType":"string"},"is_pending":{"dataType":"boolean"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_Embedding._id_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_Embedding.Exclude_keyofEmbedding._id__","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "WebEmbedding": {
+        "dataType": "refAlias",
+        "type": {"ref":"Omit_Embedding._id_","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SetEmbeddedStatus": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"enum","enums":["embedded"],"required":true},"id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -292,7 +324,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     chatId: {"in":"path","name":"chatId","required":true,"dataType":"string"},
-                    body: {"in":"body","name":"body","required":true,"ref":"TextBody"},
+                    body: {"in":"body","name":"body","required":true,"ref":"SendMessageRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -334,6 +366,165 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'classHeartbeat',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/embedding-metadata/:id/summary',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController)),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController.prototype.saveSummary)),
+
+            async function EmbeddingMetadataController_saveSummary(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"ref":"SaveSummary"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EmbeddingMetadataController();
+
+              await templateService.apiHandler({
+                methodName: 'saveSummary',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/embedding-metadata',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController)),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController.prototype.getEmbeddingMetadata)),
+
+            async function EmbeddingMetadataController_getEmbeddingMetadata(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EmbeddingMetadataController();
+
+              await templateService.apiHandler({
+                methodName: 'getEmbeddingMetadata',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/embedding-metadata/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController)),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController.prototype.createEmbeddingMetadata)),
+
+            async function EmbeddingMetadataController_createEmbeddingMetadata(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    isPending: {"in":"query","name":"isPending","dataType":"boolean"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EmbeddingMetadataController();
+
+              await templateService.apiHandler({
+                methodName: 'createEmbeddingMetadata',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/embedding-metadata',
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController)),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController.prototype.embeddingWebhook)),
+
+            async function EmbeddingMetadataController_embeddingWebhook(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    body: {"in":"body","name":"body","required":true,"ref":"SetEmbeddedStatus"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EmbeddingMetadataController();
+
+              await templateService.apiHandler({
+                methodName: 'embeddingWebhook',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/embedding-metadata/:id',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController)),
+            ...(fetchMiddlewares<RequestHandler>(EmbeddingMetadataController.prototype.deleteEmbeddingMetadata)),
+
+            async function EmbeddingMetadataController_deleteEmbeddingMetadata(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EmbeddingMetadataController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteEmbeddingMetadata',
                 controller,
                 response,
                 next,

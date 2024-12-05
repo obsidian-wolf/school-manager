@@ -7,6 +7,7 @@ export type StartupVariables = {
 	debug_ind?: number;
 	parent: Omit<User, 'students' | 'password' | 'type'> & { id: string };
 	students: Student[];
+	api_token: string;
 };
 
 /**

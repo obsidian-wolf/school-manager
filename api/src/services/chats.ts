@@ -5,6 +5,7 @@ import { User } from '../types/parent';
 import { ActorTypes, Chat, Message } from '../types/chat';
 import { vfInteract } from '../integrations/voiceflow/api';
 import { ChoiceRequest, TextRequest } from '../integrations/voiceflow/types';
+import { pamToken } from '../integrations/pam';
 
 const chatCollection = db.collection<Chat>('chat');
 
@@ -62,6 +63,7 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 				phone: user.phone,
 			},
 			students: user.students,
+			api_token: `Bearer ${pamToken}`,
 		},
 	);
 

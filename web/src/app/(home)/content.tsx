@@ -23,6 +23,7 @@ import {
     saveSummary,
     useGetEmbeddingMetadata,
 } from '~/api/endpoints';
+import { API_URL } from '~/config';
 
 export function HomePageContent() {
     const list = useListFiles();
@@ -97,7 +98,7 @@ export function HomePageContent() {
                     file,
                 },
                 params: {
-                    callbackUrl: 'https://c4e16aa954e9.ngrok.app/embedding-metadata',
+                    callbackUrl: `${API_URL}/embedding-metadata`,
                 },
             },
             {

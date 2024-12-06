@@ -63,7 +63,7 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 				phone: user.phone,
 			},
 			students: user.students,
-			api_token: `Bearer ${pamToken}`,
+			api_token: `Basic ${pamToken}`,
 		},
 	);
 

@@ -19,12 +19,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, isAdmin }) =>
         return <Navigate to="/chat" replace />;
     }
 
-    return auth ? <ProtectedLayout>{children}</ProtectedLayout> : <Navigate to="/login" replace />;
+    return auth ? (
+        isAdmin ? (
+            <AdminLayout>{children}</AdminLayout>
+        ) : (
+            children
+        )
+    ) : (
+        <Navigate to="/login" replace />
+    );
 };
 
 export default ProtectedRoute;
 
-function ProtectedLayout({ children }: { children: JSX.Element }) {
+function AdminLayout({ children }: { children: JSX.Element }) {
     const logout = useLogout();
     const location = useLocation();
 

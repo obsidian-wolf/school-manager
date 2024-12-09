@@ -54,7 +54,7 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 			type: 'launch',
 		},
 		{
-			debug_ind: 1,
+			debug_ind: 0,
 			parent: {
 				id: user._id.toString(),
 				name: user.name,

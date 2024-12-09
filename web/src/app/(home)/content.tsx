@@ -15,8 +15,6 @@ import {
     FolderArrowDownIcon,
     TrashIcon,
 } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
-import { useLogout } from '~/auth_store';
 import {
     createEmbeddingMetadata,
     deleteEmbeddingMetadata,
@@ -39,8 +37,6 @@ export function HomePageContent() {
             refetchInterval: 5000,
         },
     });
-
-    const logout = useLogout();
 
     const isLoading = list.isLoading || uploadFile.isPending || embedFile.isPending;
 
@@ -157,7 +153,7 @@ export function HomePageContent() {
     const [summary, setSummary] = useState<string | undefined>(undefined);
 
     return (
-        <div className="flex h-screen">
+        <>
             <dialog ref={dialogRef} className="modal">
                 <div className="modal-box">
                     <form
@@ -226,101 +222,82 @@ export function HomePageContent() {
                 </div>
             </dialog>
 
-            <nav className="h-full shadow bg-stone-100">
-                <div className="p-4 text-xl">School Manager</div>
-                <ul className="menu w-56 space-y-2">
-                    <li>
-                        <a className="active">Files</a>
-                    </li>
-                    <li>
-                        <Link to="/chat">Go to chat</Link>
-                    </li>
-                    <li>
-                        <a onClick={() => logout()}>Logout</a>
-                    </li>
-                </ul>
-            </nav>
+            {!list.data ? (
+                <div className="loading loading-spinner" />
+            ) : (
+                <table className="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {list.data.map((file) => {
+                            const embedding = embeddings?.find((e) => e.pam_id === file.id);
 
-            <main className="flex-1 p-4">
-                {!list.data ? (
-                    <div className="loading loading-spinner" />
-                ) : (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {list.data.map((file) => {
-                                const embedding = embeddings?.find((e) => e.pam_id === file.id);
-
-                                return (
-                                    <tr key={file.id}>
-                                        <td>{file.file_name}</td>
-                                        <td>
-                                            {embedding?.is_pending ? (
-                                                <span className="loading loading-dots loading-md"></span>
+                            return (
+                                <tr key={file.id}>
+                                    <td className="max-w-60 truncate">{file.file_name}</td>
+                                    <td>
+                                        {embedding?.is_pending ? (
+                                            <span className="loading loading-dots loading-md"></span>
+                                        ) : (
+                                            <CheckBadgeIcon className="h-6" />
+                                        )}
+                                    </td>
+                                    <td className="space-x-2 whitespace-nowrap">
+                                        <button
+                                            type="button"
+                                            className={clsx(`btn btn-outline btn-sm w-10"`)}
+                                            disabled={downloadingFileId === file.id}
+                                            onClick={() => onDownloadFile(file.id, file.file_name)}
+                                        >
+                                            {file.id === downloadingFileId ? (
+                                                <span className="loading loading-spinner"></span>
                                             ) : (
-                                                <CheckBadgeIcon className="h-6" />
+                                                <FolderArrowDownIcon className="h-4" />
                                             )}
-                                        </td>
-                                        <td className="space-x-2">
-                                            <button
-                                                type="button"
-                                                className={clsx(`btn btn-outline btn-sm w-10"`)}
-                                                disabled={downloadingFileId === file.id}
-                                                onClick={() =>
-                                                    onDownloadFile(file.id, file.file_name)
-                                                }
-                                            >
-                                                {file.id === downloadingFileId ? (
-                                                    <span className="loading loading-spinner"></span>
-                                                ) : (
-                                                    <FolderArrowDownIcon className="h-4" />
-                                                )}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline btn-error btn-sm w-10"
-                                                disabled={deletingFileId === file.id}
-                                                onClick={() => onFileDelete(file.id)}
-                                            >
-                                                {file.id === deletingFileId ? (
-                                                    <span className="loading loading-spinner"></span>
-                                                ) : (
-                                                    <TrashIcon className="h-4" />
-                                                )}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline btn-success btn-sm w-10"
-                                                disabled={!embedding?.summary}
-                                                onClick={() => {
-                                                    setSummary(embedding?.summary);
-                                                    summaryRef.current?.showModal();
-                                                }}
-                                            >
-                                                <DocumentTextIcon className="h-4" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                )}
-                <div className="divider"></div>
-                <button
-                    className="btn btn-outline"
-                    type="button"
-                    onClick={() => dialogRef.current?.showModal()}
-                >
-                    Upload New File
-                </button>
-            </main>
-        </div>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline btn-error btn-sm w-10"
+                                            disabled={deletingFileId === file.id}
+                                            onClick={() => onFileDelete(file.id)}
+                                        >
+                                            {file.id === deletingFileId ? (
+                                                <span className="loading loading-spinner"></span>
+                                            ) : (
+                                                <TrashIcon className="h-4" />
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline btn-success btn-sm w-10"
+                                            disabled={!embedding?.summary}
+                                            onClick={() => {
+                                                setSummary(embedding?.summary);
+                                                summaryRef.current?.showModal();
+                                            }}
+                                        >
+                                            <DocumentTextIcon className="h-4" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            )}
+            <div className="divider"></div>
+            <button
+                className="btn btn-outline"
+                type="button"
+                onClick={() => dialogRef.current?.showModal()}
+            >
+                Upload New File
+            </button>
+        </>
     );
 }

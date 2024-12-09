@@ -1,9 +1,13 @@
-import { Post, Route, Tags, Body, Security, Request, Path, Put, Delete } from 'tsoa';
+import { Post, Route, Tags, Body, Security, Request, Path, Put, Delete, Get } from 'tsoa';
 import { AuthedRequest } from '../infrastructure/server/middlewares/authentication_middleware';
 import {
+	createParent,
+	CreateParentRequest,
 	createStudent,
 	CreateStudentRequest,
+	deleteParent,
 	deleteStudent,
+	getParents,
 	updateParent,
 	UpdateParentRequest,
 	updateStudent,
@@ -14,6 +18,27 @@ import { ObjectId } from 'mongodb';
 @Route('user')
 @Tags('User')
 export class UserController {
+	@Get('/parent')
+	@Security('jwt')
+	public async getParents(@Request() request: AuthedRequest) {
+		return await getParents(request.user);
+	}
+
+	@Post('/parent')
+	@Security('jwt')
+	public async createParent(
+		@Request() request: AuthedRequest,
+		@Body() requestBody: CreateParentRequest,
+	) {
+		return await createParent(request.user, requestBody);
+	}
+
+	@Delete('/parent/{parentId}')
+	@Security('jwt')
+	public async deleteParent(@Request() request: AuthedRequest, @Path() parentId: string) {
+		return await deleteParent(request.user, new ObjectId(parentId));
+	}
+
 	@Put('/parent/{parentId}')
 	@Security('jwt')
 	public async updateParent(

@@ -20,10 +20,14 @@ import type {
 import type {
     ClassHeartbeat200,
     CreateEmbeddingMetadataParams,
+    CreateParent200,
+    CreateParentRequest,
     CreateStudent200,
     DeleteStudent200,
     GetChat200,
     GetChatParams,
+    GetParents200Item,
+    GetTeachers200Item,
     Login200,
     LoginBody,
     PickEmbeddingExcludeKeyofEmbeddingId,
@@ -37,6 +41,190 @@ import type {
     UpdateStudentRequest,
 } from './model';
 import { customInstance } from './custom_instance';
+
+export const getParents = (signal?: AbortSignal) => {
+    return customInstance<GetParents200Item[]>({ url: `/user/parent`, method: 'GET', signal });
+};
+
+export const getGetParentsQueryKey = () => {
+    return [`/user/parent`] as const;
+};
+
+export const getGetParentsQueryOptions = <
+    TData = Awaited<ReturnType<typeof getParents>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>>;
+}) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetParentsQueryKey();
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getParents>>> = ({ signal }) =>
+        getParents(signal);
+
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getParents>>,
+        TError,
+        TData
+    > & { queryKey: QueryKey };
+};
+
+export type GetParentsQueryResult = NonNullable<Awaited<ReturnType<typeof getParents>>>;
+export type GetParentsQueryError = unknown;
+
+export function useGetParents<
+    TData = Awaited<ReturnType<typeof getParents>>,
+    TError = unknown,
+>(options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>> &
+        Pick<
+            DefinedInitialDataOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>,
+            'initialData'
+        >;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetParents<
+    TData = Awaited<ReturnType<typeof getParents>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>> &
+        Pick<
+            UndefinedInitialDataOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>,
+            'initialData'
+        >;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetParents<
+    TData = Awaited<ReturnType<typeof getParents>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useGetParents<
+    TData = Awaited<ReturnType<typeof getParents>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getParents>>, TError, TData>>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getGetParentsQueryOptions(options);
+
+    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+export const createParent = (createParentRequest: CreateParentRequest) => {
+    return customInstance<CreateParent200>({
+        url: `/user/parent`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: createParentRequest,
+    });
+};
+
+export const getCreateParentMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof createParent>>,
+        TError,
+        { data: CreateParentRequest },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof createParent>>,
+    TError,
+    { data: CreateParentRequest },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof createParent>>,
+        { data: CreateParentRequest }
+    > = (props) => {
+        const { data } = props ?? {};
+
+        return createParent(data);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type CreateParentMutationResult = NonNullable<Awaited<ReturnType<typeof createParent>>>;
+export type CreateParentMutationBody = CreateParentRequest;
+export type CreateParentMutationError = unknown;
+
+export const useCreateParent = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof createParent>>,
+        TError,
+        { data: CreateParentRequest },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof createParent>>,
+    TError,
+    { data: CreateParentRequest },
+    TContext
+> => {
+    const mutationOptions = getCreateParentMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+export const deleteParent = (parentId: string) => {
+    return customInstance<void>({ url: `/user/parent/${parentId}`, method: 'DELETE' });
+};
+
+export const getDeleteParentMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof deleteParent>>,
+        TError,
+        { parentId: string },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof deleteParent>>,
+    TError,
+    { parentId: string },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof deleteParent>>,
+        { parentId: string }
+    > = (props) => {
+        const { parentId } = props ?? {};
+
+        return deleteParent(parentId);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteParentMutationResult = NonNullable<Awaited<ReturnType<typeof deleteParent>>>;
+
+export type DeleteParentMutationError = unknown;
+
+export const useDeleteParent = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof deleteParent>>,
+        TError,
+        { parentId: string },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof deleteParent>>,
+    TError,
+    { parentId: string },
+    TContext
+> => {
+    const mutationOptions = getDeleteParentMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
 
 export const updateParent = (parentId: string, updateParentRequest: UpdateParentRequest) => {
     return customInstance<UpdateParent200>({
@@ -271,6 +459,79 @@ export const useDeleteStudent = <TError = unknown, TContext = unknown>(options?:
 
     return useMutation(mutationOptions);
 };
+
+export const getTeachers = (signal?: AbortSignal) => {
+    return customInstance<GetTeachers200Item[]>({ url: `/teacher`, method: 'GET', signal });
+};
+
+export const getGetTeachersQueryKey = () => {
+    return [`/teacher`] as const;
+};
+
+export const getGetTeachersQueryOptions = <
+    TData = Awaited<ReturnType<typeof getTeachers>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>>;
+}) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetTeachersQueryKey();
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTeachers>>> = ({ signal }) =>
+        getTeachers(signal);
+
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof getTeachers>>,
+        TError,
+        TData
+    > & { queryKey: QueryKey };
+};
+
+export type GetTeachersQueryResult = NonNullable<Awaited<ReturnType<typeof getTeachers>>>;
+export type GetTeachersQueryError = unknown;
+
+export function useGetTeachers<
+    TData = Awaited<ReturnType<typeof getTeachers>>,
+    TError = unknown,
+>(options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>> &
+        Pick<
+            DefinedInitialDataOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>,
+            'initialData'
+        >;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetTeachers<
+    TData = Awaited<ReturnType<typeof getTeachers>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>> &
+        Pick<
+            UndefinedInitialDataOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>,
+            'initialData'
+        >;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetTeachers<
+    TData = Awaited<ReturnType<typeof getTeachers>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useGetTeachers<
+    TData = Awaited<ReturnType<typeof getTeachers>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getTeachers>>, TError, TData>>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getGetTeachersQueryOptions(options);
+
+    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
 
 export const getChat = (params?: GetChatParams, signal?: AbortSignal) => {
     return customInstance<GetChat200>({ url: `/message`, method: 'GET', params, signal });

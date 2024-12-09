@@ -1,7 +1,7 @@
 import Axios, { AxiosRequestConfig } from 'axios';
 import { useAuthStore } from '~/auth_store';
 import { API_URL } from '~/config';
-console.log({ API_URL });
+
 export const AXIOS_INSTANCE = Axios.create({
     baseURL: API_URL,
     headers: {

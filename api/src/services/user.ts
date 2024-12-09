@@ -69,6 +69,80 @@ export async function getUserFromId(id: ObjectId) {
 	return user;
 }
 
+export async function getParents(user: WithId<User>) {
+	if (user.type !== 'admin') {
+		throw new Unauthorized('Only admins can update parents');
+	}
+
+	const parents = await userCollection.find().toArray();
+
+	return parents.map(parseUser);
+}
+
+export async function deleteParent(user: WithId<User>, parentId: ObjectId) {
+	if (user.type !== 'admin') {
+		throw new Unauthorized('Only admins can update parents');
+	}
+
+	const deletedParent = await userCollection.findOneAndDelete({
+		_id: parentId,
+	});
+
+	if (!deletedParent) {
+		throw new BadRequest('Parent not found');
+	}
+}
+
+export type CreateParentRequest = {
+	name: string;
+	email: string;
+	surname: string;
+	phone: string;
+	password: string;
+};
+
+export async function createParent(user: WithId<User>, request: CreateParentRequest) {
+	if (user.type !== 'admin') {
+		throw new Unauthorized('Only admins can update parents');
+	}
+
+	const existingParent = await userCollection.findOne({
+		$or: [
+			{
+				email: request.email,
+			},
+			{
+				phone: request.phone,
+			},
+		],
+	});
+
+	if (existingParent) {
+		throw new BadRequest('Parent already exists');
+	}
+
+	const parent: User = {
+		name: request.name,
+		email: request.email,
+		surname: request.surname,
+		phone: request.phone,
+		password: request.password,
+		type: 'parent',
+		students: [],
+	};
+
+	const { insertedId } = await userCollection.insertOne(parent);
+
+	const parentWithId = {
+		...parent,
+		_id: insertedId,
+	};
+
+	USER_CACHE.push(parentWithId);
+
+	return parseUser(parentWithId);
+}
+
 export type UpdateParentRequest = {
 	name: string;
 	surname: string;

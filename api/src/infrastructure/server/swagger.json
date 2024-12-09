@@ -7,6 +7,33 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"CreateParentRequest": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"surname": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"phone",
+					"surname",
+					"email",
+					"name"
+				],
+				"type": "object"
+			},
 			"UpdateParentRequest": {
 				"properties": {
 					"phone": {
@@ -536,7 +563,258 @@
 		"contact": {}
 	},
 	"paths": {
+		"/user/parent": {
+			"get": {
+				"operationId": "GetParents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"type": {
+												"type": "string",
+												"enum": [
+													"admin",
+													"parent"
+												]
+											},
+											"password": {
+												"type": "string"
+											},
+											"phone": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											},
+											"surname": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											},
+											"students": {
+												"items": {
+													"properties": {
+														"grade": {
+															"type": "number",
+															"format": "double"
+														},
+														"gender": {
+															"type": "string",
+															"enum": [
+																"Male",
+																"Female"
+															]
+														},
+														"date_of_birth": {
+															"type": "string",
+															"format": "date-time"
+														},
+														"surname": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "string"
+														},
+														"teacher_id": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"grade",
+														"gender",
+														"date_of_birth",
+														"surname",
+														"name",
+														"id",
+														"teacher_id"
+													],
+													"type": "object"
+												},
+												"type": "array"
+											},
+											"id": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"type",
+											"password",
+											"phone",
+											"email",
+											"surname",
+											"name",
+											"students",
+											"id"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateParent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"type": {
+											"type": "string",
+											"enum": [
+												"admin",
+												"parent"
+											]
+										},
+										"password": {
+											"type": "string"
+										},
+										"phone": {
+											"type": "string"
+										},
+										"email": {
+											"type": "string"
+										},
+										"surname": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"students": {
+											"items": {
+												"properties": {
+													"grade": {
+														"type": "number",
+														"format": "double"
+													},
+													"gender": {
+														"type": "string",
+														"enum": [
+															"Male",
+															"Female"
+														]
+													},
+													"date_of_birth": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"surname": {
+														"type": "string"
+													},
+													"name": {
+														"type": "string"
+													},
+													"id": {
+														"type": "string"
+													},
+													"teacher_id": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"grade",
+													"gender",
+													"date_of_birth",
+													"surname",
+													"name",
+													"id",
+													"teacher_id"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										},
+										"id": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"type",
+										"password",
+										"phone",
+										"email",
+										"surname",
+										"name",
+										"students",
+										"id"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateParentRequest"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/parent/{parentId}": {
+			"delete": {
+				"operationId": "DeleteParent",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "parentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
 			"put": {
 				"operationId": "UpdateParent",
 				"responses": {
@@ -1042,6 +1320,51 @@
 						}
 					}
 				]
+			}
+		},
+		"/teacher": {
+			"get": {
+				"operationId": "GetTeachers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"surname": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"surname",
+											"name",
+											"id"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Teacher"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/message": {

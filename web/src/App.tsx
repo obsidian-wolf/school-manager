@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ChatPageContent } from './app/chat/content';
 import LoginPage from './app/login';
 import ProtectedRoute from './protected_route';
+import ParentsPage from './app/parents/page';
+import StudentsPage from './app/students/page';
 
 export default function App() {
     return (
@@ -23,9 +25,25 @@ export default function App() {
                     path="/"
                     element={
                         <ProtectedRoute isAdmin>
-                            <Routes>
-                                <Route path="/" element={<HomePageContent />} />
-                            </Routes>
+                            <HomePageContent />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/parents"
+                    element={
+                        <ProtectedRoute isAdmin>
+                            <ParentsPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/parents/:id"
+                    element={
+                        <ProtectedRoute isAdmin>
+                            <StudentsPage />
                         </ProtectedRoute>
                     }
                 />

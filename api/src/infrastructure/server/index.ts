@@ -44,17 +44,7 @@ export const start = async (port = 3000): Promise<void> => {
 	/**
 	 * Allows to send JSON payloads.
 	 */
-	server.use(
-		bodyParser.json({
-			verify: (req: any, res: any, buf: Buffer) => {
-				const r = buf?.toString('utf8');
-				// if url is /user/questionnaire
-				if ((req.url as string).includes('/user/questionnaire')) {
-					console.log('Raw body:', r);
-				}
-			},
-		}),
-	);
+	server.use(bodyParser.json());
 
 	server.use(cookieParser());
 

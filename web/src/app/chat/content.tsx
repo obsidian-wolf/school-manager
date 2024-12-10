@@ -6,9 +6,11 @@ import { getChat, useSendMessage } from '~/api/endpoints';
 import { ChoiceRequest, GetChat200, Message, VoiceflowResponse } from '~/api/model';
 import { ActorTypes } from '~/pam_api/model';
 import { Bars4Icon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { useLogout } from '~/auth_store';
 
 export function ChatPageContent() {
     const [chat, setChat] = useState<GetChat200 | undefined>(undefined);
+    const logout = useLogout();
 
     const { mutateAsync: sendMessage, isPending: isMessagesLoading } = useSendMessage();
 
@@ -140,6 +142,9 @@ export function ChatPageContent() {
                 >
                     <li onClick={() => getOrResetChat(true)}>
                         <a>Reset Chat</a>
+                    </li>
+                    <li>
+                        <a onClick={() => logout()}>Logout</a>
                     </li>
                 </ul>
             </div>

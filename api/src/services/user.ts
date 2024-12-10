@@ -13,6 +13,9 @@ import {
 } from '@ngneat/falso';
 import { times } from '../utils/times';
 import { genUuid } from '../utils/gen_uuid';
+import { createPamUser } from '../integrations/pam/create_user';
+import { updatePamUser } from '../integrations/pam/update_user';
+import { deletePamUser } from '../integrations/pam/delete_user';
 
 const userCollection = db.collection<User>('user');
 
@@ -91,6 +94,14 @@ export async function deleteParent(user: WithId<User>, parentId: ObjectId) {
 	if (!deletedParent) {
 		throw new BadRequest('Parent not found');
 	}
+
+	try {
+		if (deletedParent.pamId) {
+			await deletePamUser(deletedParent.pamId);
+		}
+	} catch {
+		//
+	}
 }
 
 export type CreateParentRequest = {
@@ -121,6 +132,8 @@ export async function createParent(user: WithId<User>, request: CreateParentRequ
 		throw new BadRequest('Parent already exists');
 	}
 
+	const pamUser = await createPamUser(request);
+
 	const parent: User = {
 		name: request.name,
 		email: request.email,
@@ -129,6 +142,7 @@ export async function createParent(user: WithId<User>, request: CreateParentRequ
 		password: request.password,
 		type: 'parent',
 		students: [],
+		pamId: pamUser._id,
 	};
 
 	const { insertedId } = await userCollection.insertOne(parent);
@@ -165,6 +179,8 @@ export async function updateParent(
 	if (!parent) {
 		throw new BadRequest('Parent not found');
 	}
+
+	await updatePamUser(parent, request);
 
 	const updatedParent = await userCollection.findOneAndUpdate(
 		{

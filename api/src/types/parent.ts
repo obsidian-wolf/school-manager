@@ -18,4 +18,5 @@ export type User = {
 	password: string;
 	students: Student[];
 	type: 'admin' | 'parent';
+	pamId?: string;
 };

@@ -41,11 +41,17 @@ export const CreateStudent = forwardRef<HTMLDialogElement, { parentId: string }>
                 alert('Please fill all fields');
                 return;
             }
-            await createStudentQuery.mutateAsync({
-                parentId: parentId,
-                data: parent,
-            });
-            dialogRef!.close();
+            try {
+                await createStudentQuery.mutateAsync({
+                    parentId: parentId,
+                    data: parent,
+                });
+                dialogRef!.close();
+            } catch (error) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const errorMessage = (error as any)?.response?.data?.message;
+                alert(typeof errorMessage === 'string' ? errorMessage : 'An error occurred');
+            }
         }
 
         return (

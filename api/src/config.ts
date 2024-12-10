@@ -2,6 +2,7 @@ const CONFIG = {
 	DATABASE_URL: true,
 	JWT_SECRET: true,
 	PORT: true,
+	PAM_URL: true,
 } as const;
 
 type Config = {

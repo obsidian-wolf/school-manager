@@ -65,13 +65,19 @@ export const UpdateStudent = forwardRef<
             alert('Please fill all fields');
             return;
         }
-        await updateStudentQuery.mutateAsync({
-            studentId: initialStudent.id,
-            parentId,
-            data: student,
-        });
-        onClose();
-        dialogRef!.close();
+        try {
+            await updateStudentQuery.mutateAsync({
+                studentId: initialStudent.id,
+                parentId,
+                data: student,
+            });
+            onClose();
+            dialogRef!.close();
+        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const errorMessage = (error as any)?.response?.data?.message;
+            alert(typeof errorMessage === 'string' ? errorMessage : 'An error occurred');
+        }
     }
 
     return (

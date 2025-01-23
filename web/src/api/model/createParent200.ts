@@ -11,6 +11,7 @@ export type CreateParent200 = {
     email: string;
     id: string;
     name: string;
+    pamId?: string;
     password: string;
     phone: string;
     students: CreateParent200StudentsItem[];

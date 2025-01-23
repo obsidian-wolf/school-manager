@@ -18,6 +18,7 @@ import type {
     UseQueryResult,
 } from '@tanstack/react-query';
 import type {
+    AddTagParams,
     AuthCallbackParams,
     BookingDotComCitiesOrAirportsResponse,
     BookingDotComFlightBookingUrlResponse,
@@ -28,11 +29,11 @@ import type {
     CreateListParams,
     CreateMessageParams,
     CreateReminderParams,
-    CreateUserParams,
     DeleteMessagesParams,
     DeleteUserParams,
     EmbeddingFileGetResponse,
     EmbeddingFileListResponse,
+    GetFileParams,
     GetFlightBookingUrlParams,
     GetFlightOffersParams,
     GetTotalCost200,
@@ -40,6 +41,8 @@ import type {
     GetUserParams,
     GetWeather200,
     GetWeatherParams,
+    ListFileEmbeddings200Item,
+    ListFilesParams,
     ListGetResponse,
     ListListsParams,
     ListMessagesParams,
@@ -48,12 +51,17 @@ import type {
     MessageGetResponse,
     MessagePostRequest,
     NotifyWhatsappParams,
+    PostFileCallbackParams,
     QueryEmbeddings200,
     QueryEmbeddingsParams,
     ReminderGetResponse,
     ReminderPostRequest,
+    RemoveTagParams,
     SearchCitiesParams,
     SummarizeParams,
+    UpdateDisplayNameParams,
+    UpdateExpiryParams,
+    UpdateMetadataParams,
     UpdateUserParams,
     UploadFileBody,
     UploadFileParams,
@@ -234,13 +242,12 @@ export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError =
  * Creates the user as a child of the authenticated user
  * @summary Create the user
  */
-export const createUser = (userPostRequest: UserPostRequest, params?: CreateUserParams) => {
+export const createUser = (userPostRequest: UserPostRequest) => {
     return customInstance<UserGetResponse>({
         url: `/user`,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         data: userPostRequest,
-        params,
     });
 };
 
@@ -248,24 +255,24 @@ export const getCreateUserMutationOptions = <TError = unknown, TContext = unknow
     mutation?: UseMutationOptions<
         Awaited<ReturnType<typeof createUser>>,
         TError,
-        { data: UserPostRequest; params?: CreateUserParams },
+        { data: UserPostRequest },
         TContext
     >;
 }): UseMutationOptions<
     Awaited<ReturnType<typeof createUser>>,
     TError,
-    { data: UserPostRequest; params?: CreateUserParams },
+    { data: UserPostRequest },
     TContext
 > => {
     const { mutation: mutationOptions } = options ?? {};
 
     const mutationFn: MutationFunction<
         Awaited<ReturnType<typeof createUser>>,
-        { data: UserPostRequest; params?: CreateUserParams }
+        { data: UserPostRequest }
     > = (props) => {
-        const { data, params } = props ?? {};
+        const { data } = props ?? {};
 
-        return createUser(data, params);
+        return createUser(data);
     };
 
     return { mutationFn, ...mutationOptions };
@@ -282,13 +289,13 @@ export const useCreateUser = <TError = unknown, TContext = unknown>(options?: {
     mutation?: UseMutationOptions<
         Awaited<ReturnType<typeof createUser>>,
         TError,
-        { data: UserPostRequest; params?: CreateUserParams },
+        { data: UserPostRequest },
         TContext
     >;
 }): UseMutationResult<
     Awaited<ReturnType<typeof createUser>>,
     TError,
-    { data: UserPostRequest; params?: CreateUserParams },
+    { data: UserPostRequest },
     TContext
 > => {
     const mutationOptions = getCreateUserMutationOptions(options);
@@ -1612,6 +1619,86 @@ export function useGetNewTestUser<
 }
 
 /**
+ * List all existing tags
+ * @summary List all existing tags
+ */
+export const listTags = (signal?: AbortSignal) => {
+    return customInstance<string[]>({ url: `/tag`, method: 'GET', signal });
+};
+
+export const getListTagsQueryKey = () => {
+    return [`/tag`] as const;
+};
+
+export const getListTagsQueryOptions = <
+    TData = Awaited<ReturnType<typeof listTags>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>>;
+}) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getListTagsQueryKey();
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listTags>>> = ({ signal }) =>
+        listTags(signal);
+
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof listTags>>,
+        TError,
+        TData
+    > & { queryKey: QueryKey };
+};
+
+export type ListTagsQueryResult = NonNullable<Awaited<ReturnType<typeof listTags>>>;
+export type ListTagsQueryError = unknown;
+
+export function useListTags<
+    TData = Awaited<ReturnType<typeof listTags>>,
+    TError = unknown,
+>(options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>> &
+        Pick<
+            DefinedInitialDataOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>,
+            'initialData'
+        >;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListTags<
+    TData = Awaited<ReturnType<typeof listTags>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>> &
+        Pick<
+            UndefinedInitialDataOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>,
+            'initialData'
+        >;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListTags<
+    TData = Awaited<ReturnType<typeof listTags>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary List all existing tags
+ */
+
+export function useListTags<
+    TData = Awaited<ReturnType<typeof listTags>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listTags>>, TError, TData>>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getListTagsQueryOptions(options);
+
+    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
+
+/**
  * Gets a reminder by the provided reminder id
  * @summary Get a reminder
  */
@@ -2383,30 +2470,34 @@ export function useDownloadFile<TData = Awaited<ReturnType<typeof downloadFile>>
  * List all files in the embedding service
  * @summary List all files
  */
-export const listFiles = (signal?: AbortSignal) => {
+export const listFiles = (params?: ListFilesParams, signal?: AbortSignal) => {
     return customInstance<EmbeddingFileListResponse[]>({
         url: `/embedding`,
         method: 'GET',
+        params,
         signal,
     });
 };
 
-export const getListFilesQueryKey = () => {
-    return [`/embedding`] as const;
+export const getListFilesQueryKey = (params?: ListFilesParams) => {
+    return [`/embedding`, ...(params ? [params] : [])] as const;
 };
 
 export const getListFilesQueryOptions = <
     TData = Awaited<ReturnType<typeof listFiles>>,
     TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>>;
-}) => {
+>(
+    params?: ListFilesParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>>;
+    },
+) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getListFilesQueryKey();
+    const queryKey = queryOptions?.queryKey ?? getListFilesQueryKey(params);
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listFiles>>> = ({ signal }) =>
-        listFiles(signal);
+        listFiles(params, signal);
 
     return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
         Awaited<ReturnType<typeof listFiles>>,
@@ -2418,43 +2509,43 @@ export const getListFilesQueryOptions = <
 export type ListFilesQueryResult = NonNullable<Awaited<ReturnType<typeof listFiles>>>;
 export type ListFilesQueryError = unknown;
 
-export function useListFiles<
-    TData = Awaited<ReturnType<typeof listFiles>>,
-    TError = unknown,
->(options: {
-    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>> &
-        Pick<
-            DefinedInitialDataOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>,
-            'initialData'
-        >;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useListFiles<
-    TData = Awaited<ReturnType<typeof listFiles>>,
-    TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>> &
-        Pick<
-            UndefinedInitialDataOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>,
-            'initialData'
-        >;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function useListFiles<
-    TData = Awaited<ReturnType<typeof listFiles>>,
-    TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListFiles<TData = Awaited<ReturnType<typeof listFiles>>, TError = unknown>(
+    params: undefined | ListFilesParams,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>> &
+            Pick<
+                DefinedInitialDataOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>,
+                'initialData'
+            >;
+    },
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListFiles<TData = Awaited<ReturnType<typeof listFiles>>, TError = unknown>(
+    params?: ListFilesParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>> &
+            Pick<
+                UndefinedInitialDataOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>,
+                'initialData'
+            >;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListFiles<TData = Awaited<ReturnType<typeof listFiles>>, TError = unknown>(
+    params?: ListFilesParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>>;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary List all files
  */
 
-export function useListFiles<
-    TData = Awaited<ReturnType<typeof listFiles>>,
-    TError = unknown,
->(options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-    const queryOptions = getListFilesQueryOptions(options);
+export function useListFiles<TData = Awaited<ReturnType<typeof listFiles>>, TError = unknown>(
+    params?: ListFilesParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listFiles>>, TError, TData>>;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getListFilesQueryOptions(params, options);
 
     const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -2512,16 +2603,17 @@ export const useDeleteAllFiles = <TError = unknown, TContext = unknown>(options?
  * Get a file from the embedding service
  * @summary Get a file
  */
-export const getFile = (id: string, signal?: AbortSignal) => {
+export const getFile = (id: string, params?: GetFileParams, signal?: AbortSignal) => {
     return customInstance<EmbeddingFileGetResponse>({
         url: `/embedding/${id}`,
         method: 'GET',
+        params,
         signal,
     });
 };
 
-export const getGetFileQueryKey = (id: string) => {
-    return [`/embedding/${id}`] as const;
+export const getGetFileQueryKey = (id: string, params?: GetFileParams) => {
+    return [`/embedding/${id}`, ...(params ? [params] : [])] as const;
 };
 
 export const getGetFileQueryOptions = <
@@ -2529,16 +2621,17 @@ export const getGetFileQueryOptions = <
     TError = unknown,
 >(
     id: string,
+    params?: GetFileParams,
     options?: {
         query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFile>>, TError, TData>>;
     },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getGetFileQueryKey(id);
+    const queryKey = queryOptions?.queryKey ?? getGetFileQueryKey(id, params);
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getFile>>> = ({ signal }) =>
-        getFile(id, signal);
+        getFile(id, params, signal);
 
     return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
         Awaited<ReturnType<typeof getFile>>,
@@ -2552,6 +2645,7 @@ export type GetFileQueryError = unknown;
 
 export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError = unknown>(
     id: string,
+    params: undefined | GetFileParams,
     options: {
         query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFile>>, TError, TData>> &
             Pick<
@@ -2562,6 +2656,7 @@ export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError =
 ): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
 export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError = unknown>(
     id: string,
+    params?: GetFileParams,
     options?: {
         query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFile>>, TError, TData>> &
             Pick<
@@ -2572,6 +2667,7 @@ export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError =
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError = unknown>(
     id: string,
+    params?: GetFileParams,
     options?: {
         query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFile>>, TError, TData>>;
     },
@@ -2582,11 +2678,12 @@ export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError =
 
 export function useGetFile<TData = Awaited<ReturnType<typeof getFile>>, TError = unknown>(
     id: string,
+    params?: GetFileParams,
     options?: {
         query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getFile>>, TError, TData>>;
     },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-    const queryOptions = getGetFileQueryOptions(id, options);
+    const queryOptions = getGetFileQueryOptions(id, params, options);
 
     const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -2713,6 +2810,125 @@ export const useDeleteFileEmbeddings = <TError = unknown, TContext = unknown>(op
 
     return useMutation(mutationOptions);
 };
+
+/**
+ * List all file embeddings
+ * @summary List all file embeddings
+ */
+export const listFileEmbeddings = (id: string, signal?: AbortSignal) => {
+    return customInstance<ListFileEmbeddings200Item[]>({
+        url: `/embedding/${id}/embeddings`,
+        method: 'GET',
+        signal,
+    });
+};
+
+export const getListFileEmbeddingsQueryKey = (id: string) => {
+    return [`/embedding/${id}/embeddings`] as const;
+};
+
+export const getListFileEmbeddingsQueryOptions = <
+    TData = Awaited<ReturnType<typeof listFileEmbeddings>>,
+    TError = unknown,
+>(
+    id: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof listFileEmbeddings>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getListFileEmbeddingsQueryKey(id);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listFileEmbeddings>>> = ({ signal }) =>
+        listFileEmbeddings(id, signal);
+
+    return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof listFileEmbeddings>>,
+        TError,
+        TData
+    > & { queryKey: QueryKey };
+};
+
+export type ListFileEmbeddingsQueryResult = NonNullable<
+    Awaited<ReturnType<typeof listFileEmbeddings>>
+>;
+export type ListFileEmbeddingsQueryError = unknown;
+
+export function useListFileEmbeddings<
+    TData = Awaited<ReturnType<typeof listFileEmbeddings>>,
+    TError = unknown,
+>(
+    id: string,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof listFileEmbeddings>>, TError, TData>
+        > &
+            Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listFileEmbeddings>>,
+                    TError,
+                    TData
+                >,
+                'initialData'
+            >;
+    },
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListFileEmbeddings<
+    TData = Awaited<ReturnType<typeof listFileEmbeddings>>,
+    TError = unknown,
+>(
+    id: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof listFileEmbeddings>>, TError, TData>
+        > &
+            Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listFileEmbeddings>>,
+                    TError,
+                    TData
+                >,
+                'initialData'
+            >;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useListFileEmbeddings<
+    TData = Awaited<ReturnType<typeof listFileEmbeddings>>,
+    TError = unknown,
+>(
+    id: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof listFileEmbeddings>>, TError, TData>
+        >;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary List all file embeddings
+ */
+
+export function useListFileEmbeddings<
+    TData = Awaited<ReturnType<typeof listFileEmbeddings>>,
+    TError = unknown,
+>(
+    id: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof listFileEmbeddings>>, TError, TData>
+        >;
+    },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+    const queryOptions = getListFileEmbeddingsQueryOptions(id, options);
+
+    const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+    query.queryKey = queryOptions.queryKey;
+
+    return query;
+}
 
 /**
  * Create file embeddings
@@ -3164,6 +3380,373 @@ export function useGetTotalCost<TData = Awaited<ReturnType<typeof getTotalCost>>
 
     return query;
 }
+
+/**
+ * Add tag to a file
+ * @summary Add tag to a file
+ */
+export const addTag = (id: string, params: AddTagParams) => {
+    return customInstance<void>({ url: `/embedding/${id}/tag`, method: 'POST', params });
+};
+
+export const getAddTagMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof addTag>>,
+        TError,
+        { id: string; params: AddTagParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof addTag>>,
+    TError,
+    { id: string; params: AddTagParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof addTag>>,
+        { id: string; params: AddTagParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return addTag(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type AddTagMutationResult = NonNullable<Awaited<ReturnType<typeof addTag>>>;
+
+export type AddTagMutationError = unknown;
+
+/**
+ * @summary Add tag to a file
+ */
+export const useAddTag = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof addTag>>,
+        TError,
+        { id: string; params: AddTagParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof addTag>>,
+    TError,
+    { id: string; params: AddTagParams },
+    TContext
+> => {
+    const mutationOptions = getAddTagMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+/**
+ * Remove tag from a file
+ * @summary Remove tag from a file
+ */
+export const removeTag = (id: string, params: RemoveTagParams) => {
+    return customInstance<void>({ url: `/embedding/${id}/tag`, method: 'DELETE', params });
+};
+
+export const getRemoveTagMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof removeTag>>,
+        TError,
+        { id: string; params: RemoveTagParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof removeTag>>,
+    TError,
+    { id: string; params: RemoveTagParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof removeTag>>,
+        { id: string; params: RemoveTagParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return removeTag(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveTagMutationResult = NonNullable<Awaited<ReturnType<typeof removeTag>>>;
+
+export type RemoveTagMutationError = unknown;
+
+/**
+ * @summary Remove tag from a file
+ */
+export const useRemoveTag = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof removeTag>>,
+        TError,
+        { id: string; params: RemoveTagParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof removeTag>>,
+    TError,
+    { id: string; params: RemoveTagParams },
+    TContext
+> => {
+    const mutationOptions = getRemoveTagMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+/**
+ * Update the display name of a file
+ * @summary Update the display name of a file
+ */
+export const updateDisplayName = (id: string, params: UpdateDisplayNameParams) => {
+    return customInstance<void>({ url: `/embedding/${id}/display_name`, method: 'POST', params });
+};
+
+export const getUpdateDisplayNameMutationOptions = <
+    TError = unknown,
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof updateDisplayName>>,
+        TError,
+        { id: string; params: UpdateDisplayNameParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof updateDisplayName>>,
+    TError,
+    { id: string; params: UpdateDisplayNameParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof updateDisplayName>>,
+        { id: string; params: UpdateDisplayNameParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return updateDisplayName(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateDisplayNameMutationResult = NonNullable<
+    Awaited<ReturnType<typeof updateDisplayName>>
+>;
+
+export type UpdateDisplayNameMutationError = unknown;
+
+/**
+ * @summary Update the display name of a file
+ */
+export const useUpdateDisplayName = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof updateDisplayName>>,
+        TError,
+        { id: string; params: UpdateDisplayNameParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof updateDisplayName>>,
+    TError,
+    { id: string; params: UpdateDisplayNameParams },
+    TContext
+> => {
+    const mutationOptions = getUpdateDisplayNameMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+/**
+ * Update the metadata of a file
+ * @summary Update the metadata of a file
+ */
+export const updateMetadata = (id: string, params: UpdateMetadataParams) => {
+    return customInstance<void>({ url: `/embedding/${id}/metadata`, method: 'POST', params });
+};
+
+export const getUpdateMetadataMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof updateMetadata>>,
+        TError,
+        { id: string; params: UpdateMetadataParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof updateMetadata>>,
+    TError,
+    { id: string; params: UpdateMetadataParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof updateMetadata>>,
+        { id: string; params: UpdateMetadataParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return updateMetadata(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateMetadataMutationResult = NonNullable<Awaited<ReturnType<typeof updateMetadata>>>;
+
+export type UpdateMetadataMutationError = unknown;
+
+/**
+ * @summary Update the metadata of a file
+ */
+export const useUpdateMetadata = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof updateMetadata>>,
+        TError,
+        { id: string; params: UpdateMetadataParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof updateMetadata>>,
+    TError,
+    { id: string; params: UpdateMetadataParams },
+    TContext
+> => {
+    const mutationOptions = getUpdateMetadataMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+/**
+ * Update the expiry of a file
+ * @summary Update the expiry of a file
+ */
+export const updateExpiry = (id: string, params: UpdateExpiryParams) => {
+    return customInstance<void>({ url: `/embedding/${id}/expiry`, method: 'POST', params });
+};
+
+export const getUpdateExpiryMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof updateExpiry>>,
+        TError,
+        { id: string; params: UpdateExpiryParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof updateExpiry>>,
+    TError,
+    { id: string; params: UpdateExpiryParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof updateExpiry>>,
+        { id: string; params: UpdateExpiryParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return updateExpiry(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateExpiryMutationResult = NonNullable<Awaited<ReturnType<typeof updateExpiry>>>;
+
+export type UpdateExpiryMutationError = unknown;
+
+/**
+ * @summary Update the expiry of a file
+ */
+export const useUpdateExpiry = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof updateExpiry>>,
+        TError,
+        { id: string; params: UpdateExpiryParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof updateExpiry>>,
+    TError,
+    { id: string; params: UpdateExpiryParams },
+    TContext
+> => {
+    const mutationOptions = getUpdateExpiryMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
+
+/**
+ * Post file callback
+ * @summary Post file callback
+ */
+export const postFileCallback = (id: string, params?: PostFileCallbackParams) => {
+    return customInstance<void>({ url: `/embedding/${id}/callback`, method: 'POST', params });
+};
+
+export const getPostFileCallbackMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof postFileCallback>>,
+        TError,
+        { id: string; params?: PostFileCallbackParams },
+        TContext
+    >;
+}): UseMutationOptions<
+    Awaited<ReturnType<typeof postFileCallback>>,
+    TError,
+    { id: string; params?: PostFileCallbackParams },
+    TContext
+> => {
+    const { mutation: mutationOptions } = options ?? {};
+
+    const mutationFn: MutationFunction<
+        Awaited<ReturnType<typeof postFileCallback>>,
+        { id: string; params?: PostFileCallbackParams }
+    > = (props) => {
+        const { id, params } = props ?? {};
+
+        return postFileCallback(id, params);
+    };
+
+    return { mutationFn, ...mutationOptions };
+};
+
+export type PostFileCallbackMutationResult = NonNullable<
+    Awaited<ReturnType<typeof postFileCallback>>
+>;
+
+export type PostFileCallbackMutationError = unknown;
+
+/**
+ * @summary Post file callback
+ */
+export const usePostFileCallback = <TError = unknown, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<
+        Awaited<ReturnType<typeof postFileCallback>>,
+        TError,
+        { id: string; params?: PostFileCallbackParams },
+        TContext
+    >;
+}): UseMutationResult<
+    Awaited<ReturnType<typeof postFileCallback>>,
+    TError,
+    { id: string; params?: PostFileCallbackParams },
+    TContext
+> => {
+    const mutationOptions = getPostFileCallbackMutationOptions(options);
+
+    return useMutation(mutationOptions);
+};
 
 /**
  * Gets or creates a user by phone number and returns the starting conversation details

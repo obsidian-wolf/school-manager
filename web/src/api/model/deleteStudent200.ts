@@ -11,6 +11,7 @@ export type DeleteStudent200 = {
     email: string;
     id: string;
     name: string;
+    pamId?: string;
     password: string;
     phone: string;
     students: DeleteStudent200StudentsItem[];

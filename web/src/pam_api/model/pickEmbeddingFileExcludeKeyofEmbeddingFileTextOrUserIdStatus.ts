@@ -15,4 +15,5 @@ export const PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserIdStatus = {
     embedded: 'embedded',
     error: 'error',
     deleted: 'deleted',
+    expired: 'expired',
 } as const;

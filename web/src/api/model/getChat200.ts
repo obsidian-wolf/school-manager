@@ -4,12 +4,10 @@
  * school-manager-api
  * OpenAPI spec version: 1.0
  */
-import type { Message } from './message';
-import type { ObjectId } from './objectId';
+import type { GetChat200Chat } from './getChat200Chat';
+import type { GetChat200StartupVariables } from './getChat200StartupVariables';
 
 export type GetChat200 = {
-    created_at: string;
-    id: string;
-    messages: Message[];
-    user_id: ObjectId;
+    chat: GetChat200Chat;
+    startupVariables: GetChat200StartupVariables;
 };

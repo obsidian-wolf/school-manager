@@ -32,8 +32,6 @@ import type {
     LoginBody,
     PickEmbeddingExcludeKeyofEmbeddingId,
     SaveSummary,
-    SendMessage200,
-    SendMessageRequest,
     SetEmbeddedStatus,
     UpdateParent200,
     UpdateParentRequest,
@@ -608,64 +606,6 @@ export function useGetChat<TData = Awaited<ReturnType<typeof getChat>>, TError =
 
     return query;
 }
-
-export const sendMessage = (chatId: string, sendMessageRequest: SendMessageRequest) => {
-    return customInstance<SendMessage200>({
-        url: `/message/${chatId}`,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        data: sendMessageRequest,
-    });
-};
-
-export const getSendMessageMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-    mutation?: UseMutationOptions<
-        Awaited<ReturnType<typeof sendMessage>>,
-        TError,
-        { chatId: string; data: SendMessageRequest },
-        TContext
-    >;
-}): UseMutationOptions<
-    Awaited<ReturnType<typeof sendMessage>>,
-    TError,
-    { chatId: string; data: SendMessageRequest },
-    TContext
-> => {
-    const { mutation: mutationOptions } = options ?? {};
-
-    const mutationFn: MutationFunction<
-        Awaited<ReturnType<typeof sendMessage>>,
-        { chatId: string; data: SendMessageRequest }
-    > = (props) => {
-        const { chatId, data } = props ?? {};
-
-        return sendMessage(chatId, data);
-    };
-
-    return { mutationFn, ...mutationOptions };
-};
-
-export type SendMessageMutationResult = NonNullable<Awaited<ReturnType<typeof sendMessage>>>;
-export type SendMessageMutationBody = SendMessageRequest;
-export type SendMessageMutationError = unknown;
-
-export const useSendMessage = <TError = unknown, TContext = unknown>(options?: {
-    mutation?: UseMutationOptions<
-        Awaited<ReturnType<typeof sendMessage>>,
-        TError,
-        { chatId: string; data: SendMessageRequest },
-        TContext
-    >;
-}): UseMutationResult<
-    Awaited<ReturnType<typeof sendMessage>>,
-    TError,
-    { chatId: string; data: SendMessageRequest },
-    TContext
-> => {
-    const mutationOptions = getSendMessageMutationOptions(options);
-
-    return useMutation(mutationOptions);
-};
 
 /**
  * Ping .. pong

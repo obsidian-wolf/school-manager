@@ -460,34 +460,46 @@
 				],
 				"type": "object"
 			},
-			"TextRequest": {
+			"Student": {
 				"properties": {
-					"payload": {
-						"type": "string"
+					"teacher_id": {
+						"$ref": "#/components/schemas/ObjectId"
 					},
-					"type": {
+					"grade": {
+						"type": "number",
+						"format": "double"
+					},
+					"gender": {
 						"type": "string",
 						"enum": [
-							"text"
-						],
-						"nullable": false
+							"Male",
+							"Female"
+						]
+					},
+					"date_of_birth": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"surname": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"payload",
-					"type"
+					"teacher_id",
+					"grade",
+					"gender",
+					"date_of_birth",
+					"surname",
+					"name",
+					"id"
 				],
 				"type": "object"
-			},
-			"SendMessageRequest": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/ChoiceRequest"
-					},
-					{
-						"$ref": "#/components/schemas/TextRequest"
-					}
-				]
 			},
 			"SaveSummary": {
 				"properties": {
@@ -1395,28 +1407,88 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"messages": {
-											"items": {
-												"$ref": "#/components/schemas/Message"
+										"startupVariables": {
+											"properties": {
+												"api_token": {
+													"type": "string"
+												},
+												"students": {
+													"items": {
+														"$ref": "#/components/schemas/Student"
+													},
+													"type": "array"
+												},
+												"parent": {
+													"properties": {
+														"phone": {
+															"type": "string"
+														},
+														"email": {
+															"type": "string"
+														},
+														"surname": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"phone",
+														"email",
+														"surname",
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"debug_ind": {
+													"type": "number",
+													"format": "double"
+												}
 											},
-											"type": "array"
+											"required": [
+												"api_token",
+												"students",
+												"parent",
+												"debug_ind"
+											],
+											"type": "object"
 										},
-										"user_id": {
-											"$ref": "#/components/schemas/ObjectId"
-										},
-										"created_at": {
-											"type": "string",
-											"format": "date-time"
-										},
-										"id": {
-											"type": "string"
+										"chat": {
+											"properties": {
+												"messages": {
+													"items": {
+														"$ref": "#/components/schemas/Message"
+													},
+													"type": "array"
+												},
+												"user_id": {
+													"$ref": "#/components/schemas/ObjectId"
+												},
+												"created_at": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"id": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"messages",
+												"user_id",
+												"created_at",
+												"id"
+											],
+											"type": "object"
 										}
 									},
 									"required": [
-										"messages",
-										"user_id",
-										"created_at",
-										"id"
+										"startupVariables",
+										"chat"
 									],
 									"type": "object"
 								}
@@ -1442,75 +1514,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/message/{chatId}": {
-			"post": {
-				"operationId": "SendMessage",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"messages": {
-											"items": {
-												"$ref": "#/components/schemas/Message"
-											},
-											"type": "array"
-										},
-										"user_id": {
-											"$ref": "#/components/schemas/ObjectId"
-										},
-										"created_at": {
-											"type": "string",
-											"format": "date-time"
-										},
-										"id": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"messages",
-										"user_id",
-										"created_at",
-										"id"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Message"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "chatId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SendMessageRequest"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/heartbeat": {

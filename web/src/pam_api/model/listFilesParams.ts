@@ -5,10 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type QueryEmbeddingsParams = {
-    input: string;
+export type ListFilesParams = {
     tag?: string;
-    embedding_file_id?: string;
     /**
      * If you want to query a file for a different user, you can specify the user id here.
      */

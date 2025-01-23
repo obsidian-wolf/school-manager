@@ -105,14 +105,9 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"voiceflowResponses":{"dataType":"array","array":{"dataType":"refAlias","ref":"VoiceflowResponse"}},"is_deleted":{"dataType":"boolean","required":true},"created_at":{"dataType":"datetime","required":true},"parent_text":{"dataType":"string"},"actor":{"ref":"ActorTypes","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TextRequest": {
+    "Student": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"dataType":"string","required":true},"type":{"dataType":"enum","enums":["text"],"required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SendMessageRequest": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"ref":"ChoiceRequest"},{"ref":"TextRequest"}],"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"teacher_id":{"ref":"ObjectId","required":true},"grade":{"dataType":"double","required":true},"gender":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Male"]},{"dataType":"enum","enums":["Female"]}],"required":true},"date_of_birth":{"dataType":"datetime","required":true},"surname":{"dataType":"string","required":true},"name":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SaveSummary": {
@@ -437,39 +432,6 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getChat',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/message/:chatId',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(MessageController)),
-            ...(fetchMiddlewares<RequestHandler>(MessageController.prototype.sendMessage)),
-
-            async function MessageController_sendMessage(request: ExRequest, response: ExResponse, next: any) {
-            const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    chatId: {"in":"path","name":"chatId","required":true,"dataType":"string"},
-                    body: {"in":"body","name":"body","required":true,"ref":"SendMessageRequest"},
-            };
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args, request, response });
-
-                const controller = new MessageController();
-
-              await templateService.apiHandler({
-                methodName: 'sendMessage',
                 controller,
                 response,
                 next,

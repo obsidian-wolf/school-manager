@@ -188,6 +188,7 @@ export async function updateParent(
 		},
 		{
 			$set: {
+				pamId: parent.pamId,
 				name: request.name,
 				surname: request.surname,
 				phone: request.phone,

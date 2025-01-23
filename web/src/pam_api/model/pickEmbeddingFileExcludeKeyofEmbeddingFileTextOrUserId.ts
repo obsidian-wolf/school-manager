@@ -12,10 +12,13 @@ import type { PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserIdStatus } fro
 export interface PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserId {
     callback_url?: string;
     created_at: string;
+    display_name?: string;
+    expires_at?: string;
     file_name: string;
     location: string;
     md5: string;
+    metadata?: string;
     status: PickEmbeddingFileExcludeKeyofEmbeddingFileTextOrUserIdStatus;
-    tag?: string;
+    tags?: string[];
     text_file_id?: string;
 }

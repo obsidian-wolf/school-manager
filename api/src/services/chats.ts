@@ -1,20 +1,31 @@
-import { ObjectId, WithId } from 'mongodb';
-import { BadRequest } from '../infrastructure/common/errors';
+import { WithId } from 'mongodb';
 import db from '../infrastructure/db';
 import { User } from '../types/parent';
-import { ActorTypes, Chat, Message } from '../types/chat';
-import { vfInteract } from '../integrations/voiceflow/api';
-import { ChoiceRequest, TextRequest } from '../integrations/voiceflow/types';
+import { ActorTypes, Chat } from '../types/chat';
 import { pamToken } from '../integrations/pam';
 
 const chatCollection = db.collection<Chat>('chat');
 
-export function parseChat(chat: WithId<Chat>) {
+export function parseChat(chat: WithId<Chat>, user: WithId<User>) {
 	const { _id, ...res } = chat;
 
 	return {
-		...res,
-		id: _id.toString(),
+		chat: {
+			...res,
+			id: _id.toString(),
+		},
+		startupVariables: {
+			debug_ind: 0,
+			parent: {
+				id: user.pamId,
+				name: user.name,
+				surname: user.surname,
+				email: user.email,
+				phone: user.phone,
+			},
+			students: user.students,
+			api_token: `Basic ${pamToken}`,
+		},
 	};
 }
 
@@ -32,11 +43,11 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 		);
 
 		if (chat) {
-			return parseChat(chat);
+			return parseChat(chat, user);
 		}
 	}
 
-	const newChatId = await chatCollection.insertOne({
+	const newChat: Chat = {
 		created_at: new Date(),
 		user_id: user._id,
 		messages: [
@@ -46,104 +57,14 @@ export async function getChat(user: WithId<User>, forceReset = false) {
 				is_deleted: false,
 			},
 		],
-	});
-
-	const vfResponses = await vfInteract(
-		newChatId.insertedId.toString(),
-		{
-			type: 'launch',
-		},
-		{
-			debug_ind: 0,
-			parent: {
-				id: user.pamId,
-				name: user.name,
-				surname: user.surname,
-				email: user.email,
-				phone: user.phone,
-			},
-			students: user.students,
-			api_token: `Basic ${pamToken}`,
-		},
-	);
-
-	const updatedChat = await chatCollection.findOneAndUpdate(
-		{
-			_id: newChatId.insertedId,
-		},
-		{
-			$push: {
-				messages: {
-					actor: ActorTypes.ASSISTANT,
-					created_at: new Date(),
-					is_deleted: false,
-					voiceflowResponses: vfResponses,
-				},
-			},
-		},
-		{
-			returnDocument: 'after',
-		},
-	);
-
-	return parseChat(updatedChat!);
-}
-
-export type SendMessageRequest = ChoiceRequest | TextRequest;
-
-export async function sendMessage(
-	parent: WithId<User>,
-	chatId: ObjectId,
-	request: SendMessageRequest,
-) {
-	const chat = await chatCollection.findOne({
-		_id: chatId,
-		user_id: parent._id,
-	});
-
-	if (!chat) {
-		throw new BadRequest('Chat not found');
-	}
-
-	const parentText = (() => {
-		if (typeof request.payload === 'string') {
-			return request.payload;
-		}
-		return request.payload.label;
-	})();
-
-	const parentMessage: Message = {
-		actor: ActorTypes.USER,
-		created_at: new Date(),
-		is_deleted: false,
-		parent_text: parentText,
 	};
 
-	const vfResponses = await vfInteract(chatId.toString(), request);
+	const { insertedId: newChatId } = await chatCollection.insertOne(newChat);
 
-	const updatedChat = await chatCollection.findOneAndUpdate(
-		{
-			_id: chatId,
-		},
-		{
-			$push: {
-				messages: {
-					$each: [
-						parentMessage,
-						{
-							actor: ActorTypes.ASSISTANT,
-							created_at: new Date(),
-							is_deleted: false,
-							voiceflowResponses: vfResponses,
-						},
-					],
-				},
-			},
-		},
-		{
-			returnDocument: 'after',
-		},
-	);
+	const newChatWithId: WithId<Chat> = {
+		...newChat,
+		_id: newChatId,
+	};
 
-	return parseChat(updatedChat!);
+	return parseChat(newChatWithId, user);
 }

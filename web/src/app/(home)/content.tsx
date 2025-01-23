@@ -94,7 +94,7 @@ export function HomePageContent() {
                     file,
                 },
                 params: {
-                    callbackUrl: `${API_URL}/embedding-metadata`,
+                    callbackUrl: 'https://52cd74a92b6e.ngrok.app/embedding-metadata', // `${API_URL}/embedding-metadata`,
                 },
             },
             {

@@ -67,7 +67,7 @@ export function ChatPageContent() {
                     </li>
                 </ul>
             </div>
-            <div id="chat" ref={ref} className="p-20 h-full"></div>
+            <div id="chat" ref={ref} className="md:p-20 h-full"></div>
         </div>
     );
 }
